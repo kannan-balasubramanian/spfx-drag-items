@@ -1,0 +1,16 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "version": "1.14.0",
+    "libraryName": "spfx-drag-items",
+    "libraryId": "4e5cc62a-31ac-4dd2-80a7-3c4ec44d2c5d",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "spfx-drag-items",
+    "solutionShortDescription": "spfx-drag-items description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "spfx-drag-items-client-side-solution",
+    "id": "4e5cc62a-31ac-4dd2-80a7-3c4ec44d2c5d",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.14.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "spfx-drag-items description"
+      },
+      "longDescription": {
+        "default": "spfx-drag-items description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "spfx-drag-items Feature",
+        "description": "The feature that activates elements of the spfx-drag-items solution.",
+        "id": "3827b625-c151-4699-90ad-adcc97eec468",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/spfx-drag-items.sppkg"
+  }
+}

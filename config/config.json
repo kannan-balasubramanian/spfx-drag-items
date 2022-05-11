@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "sp-fx-drag-items-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/spFxDragItems/SpFxDragItemsWebPart.js",
+          "manifest": "./src/webparts/spFxDragItems/SpFxDragItemsWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "SpFxDragItemsWebPartStrings": "lib/webparts/spFxDragItems/loc/{locale}.js"
+  }
+}
