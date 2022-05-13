@@ -62,6 +62,8 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     private generateSectionsButtonClicked(event?: React.MouseEvent<HTMLButtonElement>) {
         this.setState({ isGenerateSectionsButtonDisabled: true });
         let newSections: ISection[] = [];
+        let sectionLocationId: number = 0;
+        let sectionItemLocationId: number = 0;
 
         for (let indexX = 0; indexX < 4; indexX++) {
             let newSectionItems: ISectionItem[] = [];
@@ -69,9 +71,11 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
             let newSectionTitle: string = ("Section " + (indexX + 1));
 
             for (let indexY = 0; indexY < 4; indexY++) {
-                newSectionItems.push({ id: this.randomNumberGenerator(), title: (newSectionTitle + " Item " + (indexY + 1)), locationId: indexY, sectionId: newSectionId });
+                newSectionItems.push({ id: this.randomNumberGenerator(), title: (newSectionTitle + " Item " + (indexY + 1)), locationId: sectionItemLocationId, sectionId: newSectionId });
+                sectionItemLocationId++;
             }
-            newSections.push({ id: newSectionId, title: newSectionTitle, locationId: indexX, isExpanded: false, sectionItems: newSectionItems });
+            newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: false, sectionItems: newSectionItems });
+            sectionLocationId++;
         }
         this.setState({ sections: newSections });
         // console.log("SectionsContainerComponent=>generateSectionsButtonClicked->");

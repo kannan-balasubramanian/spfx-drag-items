@@ -35,7 +35,7 @@ function SectionComponent(props) {
         setNodeRef,
         transform,
         transition,
-    } = useSortable({ id: props.id.toString() });
+    } = useSortable({ id: props.locationId.toString() });
 
     const style = {
         transition,
@@ -43,7 +43,6 @@ function SectionComponent(props) {
     };
 
     return (
-
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Stack horizontal styles={stackStyles} tokens={itemAlignmentsStackTokens}>
                 <Label>{props.locationId} </Label>
@@ -57,65 +56,3 @@ function SectionComponent(props) {
 }
 
 export default SectionComponent;
-// export default class SectionComponent extends React.Component<ISectionItemComponentProps, ISectionItemComponentState> {
-
-//     constructor(props: ISectionItemComponentProps, state: ISectionItemComponentState) {
-//         super(props);
-//         if (props != null) {
-//             this.state = {
-//                 id: props.id,
-//                 title: props.title,
-//                 locationId: props.locationId,
-//                 sectionId: props.sectionId
-//             };
-//         }
-//         else {
-//             this.state = {
-//                 id: undefined,
-//                 title: undefined,
-//                 locationId: undefined,
-//                 sectionId: undefined
-//             };
-//         }
-//     }
-
-
-//     public componentWillReceiveProps(props: ISectionItemComponentProps) {
-//         if (props != null) {
-//             this.state = {
-//                 id: props.id,
-//                 title: props.title,
-//                 locationId: props.locationId,
-//                 sectionId: props.sectionId
-//             };
-//         }
-
-//     }
-
-//     public render(): React.ReactElement<{}> {
-
-//         try {
-
-//             const sortable = useSortable({ id: this.state.locationId.toString() });
-
-//             // const style = {
-//             //     transform: CSS.Transform.toString(transform),
-//             //     transition,
-//             // };
-
-//             return (
-//                 <div  >
-//                     <Stack horizontal styles={stackStyles} tokens={itemAlignmentsStackTokens}>
-//                         <Label>{this.state.locationId} </Label>
-//                         {/* <IconButton iconProps={rightIcon} />
-//                     <IconButton iconProps={downIcon} /> */}
-//                         <Label>({this.state.sectionId}/{this.state.id}) {this.state.title}</Label>
-//                     </Stack>
-//                 </div >
-//             );
-//         }
-//         catch (error) {
-//             console.log("Error:" + error);
-//         }
-//     }
-// }
