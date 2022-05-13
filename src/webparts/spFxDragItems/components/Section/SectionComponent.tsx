@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Stack, IStackStyles, IStackTokens, IStackItemStyles } from 'office-ui-fabric-react';
+import { Stack, IStackStyles, IStackTokens, IStackItemStyles, mergeStyles } from 'office-ui-fabric-react';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { DefaultPalette } from 'office-ui-fabric-react';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
@@ -17,79 +17,87 @@ const rightIcon: IIconProps = { iconName: 'ChevronRightMed' };
 const downIcon: IIconProps = { iconName: 'ChevronDownMed' };
 const headerStackStyles: IStackStyles = {
     root: {
-        background: DefaultPalette.neutralTertiaryAlt
+        background: DefaultPalette.themeDarker
     },
 };
 
+const headerLabelStyles = mergeStyles({
+    color: DefaultPalette.themeLighterAlt,
+});
 const headerStackTokens: IStackTokens = {
-    childrenGap: 5,
+    childrenGap: 10,
     padding: 10,
 };
 
-// const itemsStackStyles: IStackStyles = {
-//     root: {
-//         background: DefaultPalette.neutralLight
-//     },
-// };
+const itemStackStyles: IStackStyles = {
+    root: {
+        background: DefaultPalette.themeTertiary,
+    },
+};
 
-// const itemsStackTokens: IStackTokens = {
-//     childrenGap: 5,
-//     padding: 10,
-// };
-
+const itemStackTokens: IStackTokens = {
+    childrenGap: 10,
+    padding: 10,
+};
 
 
 function SectionComponent(props) {
 
-    const [sectionItems, setItems] = React.useState(props.sectionItems);
+    const [sectionItems, setSectionItems] = React.useState(props.sectionItems);
+    const [isExpanded, setIsSectionExpandedItems] = React.useState(props.isExpanded);
     const sensors = [useSensor(PointerSensor)];
 
-    const handleDragEnd = ({ active, over }) => {
-        // console.clear();
-        // console.log("SectionComponent->handleDragEnd");
+    const onComponentItemDragEnd = ({ active, over }) => {
         console.log(sectionItems);
         if (active.id != over.id) {
-            // console.log("Not Same");
-            setItems((sectionItems) => {
+            setSectionItems((sectionItems) => {
                 const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
                 const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
-                // console.log(oldIndex);
-                // console.log(newIndex);
-
                 return arrayMove(sectionItems, oldIndex, newIndex);
             });
         }
-        else {
-            // console.log("Same");
-            // console.log(active.id);
-            // console.log(over.id);
-        }
-        // console.log(sectionItems);
     };
-    // console.log("SectionComponent=>SectionComponent->Before return");
-    // console.log(sectionItems);
+
+    const onCollapseButtonClick = () => {
+        setIsSectionExpandedItems(!isExpanded);
+    };
+    const onExpandButtonClick = () => {
+        setIsSectionExpandedItems(!isExpanded);
+    };
+
     return (
         <div>
             <div>
                 <Stack horizontal styles={headerStackStyles} tokens={headerStackTokens}>
-                    <IconButton iconProps={rightIcon} />
-                    <IconButton iconProps={downIcon} />
-                    <Label>{props.locationId} ({props.id}) {props.title}</Label>
+                    {
+                        isExpanded === false ?
+                            <IconButton iconProps={rightIcon} onClick={onCollapseButtonClick} />
+                            : undefined
+                    }
+                    {
+                        isExpanded === true ?
+                            <IconButton iconProps={downIcon} onClick={onExpandButtonClick} />
+                            : undefined
+                    }
+                    <Label className={headerLabelStyles} >{props.locationId} ({props.id}) {props.title}</Label>
+
                 </Stack>
             </div>
-            <div>
+            {isExpanded === true ?
+                <div>
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onComponentItemDragEnd} >
+                        <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
+                            <Stack styles={itemStackStyles} tokens={itemStackTokens}>
+                                {sectionItems.map((sectionItem) =>
+                                    <div key={sectionItem.locationId}><SectionItemComponent key={sectionItem.locationId} {...sectionItem} /></div>
+                                )}
+                            </Stack>
+                        </SortableContext>
+                    </DndContext>
 
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd} >
-                    <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
-                        {/* <Stack styles={headerStackStyles} tokens={headerStackTokens}> */}
-                        {sectionItems.map((sectionItem) =>
-                            <div key={sectionItem.locationId}><SectionItemComponent key={sectionItem.locationId} {...sectionItem} /></div>
-                        )}
-                        {/* </Stack> */}
-                    </SortableContext>
-                </DndContext>
-
-            </div>
+                </div>
+                : undefined
+            }
         </div>
     );
 }

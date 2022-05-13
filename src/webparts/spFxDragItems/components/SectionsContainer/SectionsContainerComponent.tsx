@@ -65,7 +65,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         let sectionLocationId: number = 0;
         let sectionItemLocationId: number = 0;
 
-        for (let indexX = 0; indexX < 4; indexX++) {
+        for (let indexX = 0; indexX < 3; indexX++) {
             let newSectionItems: ISectionItem[] = [];
             let newSectionId: number = this.randomNumberGenerator();
             let newSectionTitle: string = ("Section " + (indexX + 1));

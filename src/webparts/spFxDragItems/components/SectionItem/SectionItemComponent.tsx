@@ -18,14 +18,14 @@ function SectionComponent(props) {
     // const rightIcon: IIconProps = { iconName: 'ChevronRightMed' };
     // const downIcon: IIconProps = { iconName: 'ChevronDownMed' };
 
-    const stackStyles: IStackStyles = {
+    const itemStackStyles: IStackStyles = {
         root: {
-            background: DefaultPalette.neutralLight,
+            background: DefaultPalette.themeLighterAlt,
         },
     };
 
-    const itemAlignmentsStackTokens: IStackTokens = {
-        childrenGap: 5,
+    const itemStackTokens: IStackTokens = {
+        childrenGap: 10,
         padding: 10,
     };
 
@@ -44,7 +44,7 @@ function SectionComponent(props) {
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <Stack horizontal styles={stackStyles} tokens={itemAlignmentsStackTokens}>
+            <Stack horizontal styles={itemStackStyles} tokens={itemStackTokens}>
                 <Label>{props.locationId} </Label>
                 {/* <IconButton iconProps={rightIcon} />
                             <IconButton iconProps={downIcon} /> */}
