@@ -6,8 +6,8 @@ import { DefaultPalette } from 'office-ui-fabric-react';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { IIconProps } from 'office-ui-fabric-react/';
 
-import { ISectionComponentProps } from './ISectionComponentProps';
-import { ISectionComponentState } from './ISectionComponentState';
+// import { ISectionComponentProps } from './ISectionComponentProps';
+// import { ISectionComponentState } from './ISectionComponentState';
 
 import SectionItemComponent from '../SectionItem/SectionItemComponent';
 import { closestCenter, DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
@@ -26,16 +26,16 @@ const headerStackTokens: IStackTokens = {
     padding: 10,
 };
 
-const itemsStackStyles: IStackStyles = {
-    root: {
-        background: DefaultPalette.neutralLight
-    },
-};
+// const itemsStackStyles: IStackStyles = {
+//     root: {
+//         background: DefaultPalette.neutralLight
+//     },
+// };
 
-const itemsStackTokens: IStackTokens = {
-    childrenGap: 5,
-    padding: 10,
-};
+// const itemsStackTokens: IStackTokens = {
+//     childrenGap: 5,
+//     padding: 10,
+// };
 
 
 
@@ -46,28 +46,28 @@ function SectionComponent(props) {
 
     const handleDragEnd = ({ active, over }) => {
         // console.clear();
-        console.log("SectionComponent->handleDragEnd");
+        // console.log("SectionComponent->handleDragEnd");
         console.log(sectionItems);
         if (active.id != over.id) {
-            console.log("Not Same");
+            // console.log("Not Same");
             setItems((sectionItems) => {
                 const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
                 const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
-                console.log(oldIndex);
-                console.log(newIndex);
+                // console.log(oldIndex);
+                // console.log(newIndex);
 
                 return arrayMove(sectionItems, oldIndex, newIndex);
             });
         }
         else {
-            console.log("Same");
-            console.log(active.id);
-            console.log(over.id);
+            // console.log("Same");
+            // console.log(active.id);
+            // console.log(over.id);
         }
-        console.log(sectionItems);
+        // console.log(sectionItems);
     };
-    console.log("SectionComponent=>SectionComponent->Before return");
-    console.log(sectionItems);
+    // console.log("SectionComponent=>SectionComponent->Before return");
+    // console.log(sectionItems);
     return (
         <div>
             <div>
