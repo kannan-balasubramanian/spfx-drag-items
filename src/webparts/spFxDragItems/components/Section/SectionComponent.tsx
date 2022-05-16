@@ -10,6 +10,7 @@ import { IIconProps } from 'office-ui-fabric-react/';
 // import { ISectionComponentState } from './ISectionComponentState';
 
 import SectionItemComponent from '../SectionItem/SectionItemComponent';
+import ISection from "../../models/ISection";
 import { closestCenter, DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
@@ -43,8 +44,8 @@ const itemStackTokens: IStackTokens = {
 
 function SectionComponent(props) {
 
-    const [sectionItems, setSectionItems] = React.useState(props.sectionItems);
-    const [isExpanded, setIsSectionExpandedItems] = React.useState(props.isExpanded);
+    const [sectionItems, setSectionItems] = React.useState(props.section.sectionItems);
+    const [isExpanded, setIsSectionExpandedItems] = React.useState(props.section.isExpanded);
     const sensors = [useSensor(PointerSensor)];
 
     const onComponentItemDragEnd = ({ active, over }) => {
@@ -66,9 +67,16 @@ function SectionComponent(props) {
     };
 
     const updateParentStateCall = () => {
-        console.log("SectionComponent=>updateParentState");
-        console.log(sectionItems);
-        props.updateParentState(props.id, sectionItems);
+        // console.log("SectionComponent=>updateParentState");
+        // console.log(sectionItems);
+        let updatedSection: ISection = {
+            id: props.section.id,
+            title: props.section.title,
+            locationId: props.section.locationId,
+            isExpanded: props.section.isExpanded,
+            sectionItems: sectionItems,
+        };
+        props.updateParentState(updatedSection);
     };
 
     React.useEffect(() => {
@@ -89,7 +97,7 @@ function SectionComponent(props) {
                             <IconButton iconProps={downIcon} onClick={onExpandButtonClick} />
                             : undefined
                     }
-                    <Label className={headerLabelStyles} >{props.locationId} ({props.id}) {props.title}</Label>
+                    <Label className={headerLabelStyles} >{props.section.locationId} ({props.section.id}) {props.section.title}</Label>
 
                 </Stack>
             </div>

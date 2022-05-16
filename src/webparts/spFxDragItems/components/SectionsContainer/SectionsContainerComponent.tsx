@@ -9,9 +9,11 @@ import { ISectionsContainerComponentState } from './ISectionsContainerComponentS
 import ISection from "../../models/ISection";
 import ISectionItem from "../../models/ISectionItem";
 import SectionComponent from '../Section/SectionComponent';
+import { forEach } from 'lodash';
 
 
 const generateIcon: IIconProps = { iconName: 'SyncStatus' };
+const viewIcon: IIconProps = { iconName: 'EntryView' };
 const stackStyles: IStackStyles = {
     root: {
         background: DefaultPalette.neutralLight,
@@ -39,6 +41,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
             <div>
                 <div>
                     <ActionButton iconProps={generateIcon} onClick={this.generateSectionsButtonClicked.bind(this)} disabled={this.state.isGenerateSectionsButtonDisabled} >Generate Sections</ActionButton>
+                    <ActionButton iconProps={viewIcon} onClick={this.viewState.bind(this)} >View State</ActionButton>
                 </div>
                 <div>
                     <div>
@@ -46,7 +49,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                             < Stack styles={stackStyles} tokens={itemAlignmentsStackTokens}>
                                 {
                                     this.state.sections.map((eachSection) => {
-                                        return (<div><SectionComponent updateParentState={this.onUpdateParentStateCall} id={eachSection.id} title={eachSection.title} locationId={eachSection.locationId} isExpanded={eachSection.isExpanded} key={eachSection.id} sectionItems={eachSection.sectionItems} /></div>);
+                                        return (<div><SectionComponent updateParentState={this.onUpdateParentStateCall} section={eachSection} key={eachSection.locationId} /></div>);
                                     })
 
                                 }
@@ -61,10 +64,30 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         );
     }
 
-    public onUpdateParentStateCall = (id, sectionItem) => {
-        console.log("SectionComponent=>onUpdateParentStateCall");
-        console.log(id);
-        console.log(id, sectionItem);
+    public onUpdateParentStateCall = (section: ISection) => {
+        // console.log("SectionComponent=>onUpdateParentStateCall");
+        // console.log(section);
+        let newSectionItems: ISectionItem[] = [];
+        for (let i = 0; i < section.sectionItems.length; i++) {
+            newSectionItems.push({ id: section.sectionItems[i].id, title: section.sectionItems[i].title, locationId: i, sectionId: section.sectionItems[i].sectionId });
+        }
+
+        // let 
+        // this.setState({
+        //     sections: this.state.sections.map(currentSection => (currentSection.id === section.id) ? { ...currentSection, sectionItems } : newSectionItems)
+        // });
+
+        // // let tempSection = this.state.sections.filter(thisSection => thisSection.id === section.id);
+        // console.log("SectionComponent=>onUpdateParentStateCall->AfterLocation");
+        // console.log(newSectionItems);
+
+        let tempSectionsFromState = [...this.state.sections];
+        tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
+
+        // this.setState({ sections: tempSectionsFromState });
+
+
+        // console.log(tempSectionItems.sectionItems);
     }
 
     private generateSectionsButtonClicked(event?: React.MouseEvent<HTMLButtonElement>) {
@@ -88,6 +111,10 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         this.setState({ sections: newSections });
         // console.log("SectionsContainerComponent=>generateSectionsButtonClicked->");
         // console.log(newSections);
+    }
+
+    private viewState() {
+        console.log(this.state.sections);
     }
 
     private randomNumberGenerator(): number {
