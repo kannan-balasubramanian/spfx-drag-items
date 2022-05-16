@@ -48,7 +48,7 @@ function SectionComponent(props) {
                 <Label>{props.locationId} </Label>
                 {/* <IconButton iconProps={rightIcon} />
                             <IconButton iconProps={downIcon} /> */}
-                <Label>({props.sectionId}/{props.id}) {props.title}</Label>
+                <Label>({props.id}) {props.title}</Label>
             </Stack>
         </div >
 

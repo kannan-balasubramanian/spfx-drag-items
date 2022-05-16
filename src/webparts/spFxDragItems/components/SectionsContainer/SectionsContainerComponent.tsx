@@ -23,6 +23,8 @@ const itemAlignmentsStackTokens: IStackTokens = {
 };
 
 
+
+
 export default class SectionsContainerComponent extends React.Component<{}, ISectionsContainerComponentState> {
 
     constructor(state: ISectionsContainerComponentState) {
@@ -44,7 +46,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                             < Stack styles={stackStyles} tokens={itemAlignmentsStackTokens}>
                                 {
                                     this.state.sections.map((eachSection) => {
-                                        return (<div><SectionComponent id={eachSection.id} title={eachSection.title} locationId={eachSection.locationId} isExpanded={eachSection.isExpanded} key={eachSection.id} sectionItems={eachSection.sectionItems} /></div>);
+                                        return (<div><SectionComponent updateParentState={this.onUpdateParentStateCall} id={eachSection.id} title={eachSection.title} locationId={eachSection.locationId} isExpanded={eachSection.isExpanded} key={eachSection.id} sectionItems={eachSection.sectionItems} /></div>);
                                     })
 
                                 }
@@ -59,13 +61,19 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         );
     }
 
+    public onUpdateParentStateCall = (id, sectionItem) => {
+        console.log("SectionComponent=>onUpdateParentStateCall");
+        console.log(id);
+        console.log(id, sectionItem);
+    }
+
     private generateSectionsButtonClicked(event?: React.MouseEvent<HTMLButtonElement>) {
         this.setState({ isGenerateSectionsButtonDisabled: true });
         let newSections: ISection[] = [];
         let sectionLocationId: number = 0;
-        let sectionItemLocationId: number = 0;
 
         for (let indexX = 0; indexX < 3; indexX++) {
+            let sectionItemLocationId: number = 0;
             let newSectionItems: ISectionItem[] = [];
             let newSectionId: number = this.randomNumberGenerator();
             let newSectionTitle: string = ("Section " + (indexX + 1));
@@ -84,7 +92,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
     private randomNumberGenerator(): number {
         let min = 1;
-        let max = 999999;
+        let max = 99;
         let rand = min + (Math.random() * (max - min));
         return Math.round(rand);
     }

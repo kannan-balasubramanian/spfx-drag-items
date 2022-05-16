@@ -48,7 +48,7 @@ function SectionComponent(props) {
     const sensors = [useSensor(PointerSensor)];
 
     const onComponentItemDragEnd = ({ active, over }) => {
-        console.log(sectionItems);
+        // console.log(sectionItems);
         if (active.id != over.id) {
             setSectionItems((sectionItems) => {
                 const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
@@ -64,6 +64,16 @@ function SectionComponent(props) {
     const onExpandButtonClick = () => {
         setIsSectionExpandedItems(!isExpanded);
     };
+
+    const updateParentStateCall = () => {
+        console.log("SectionComponent=>updateParentState");
+        console.log(sectionItems);
+        props.updateParentState(props.id, sectionItems);
+    };
+
+    React.useEffect(() => {
+        updateParentStateCall();
+    });
 
     return (
         <div>

@@ -6,4 +6,6 @@ export interface ISectionComponentProps {
     locationId: number;
     isExpanded: boolean;
     sectionItems: ISectionItem[];
+
+    updateParentState(id: number, sectionItems: ISectionItem[]): void;
 }
