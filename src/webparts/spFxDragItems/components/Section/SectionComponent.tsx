@@ -16,18 +16,30 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-ki
 
 const rightIcon: IIconProps = { iconName: 'ChevronRightMed' };
 const downIcon: IIconProps = { iconName: 'ChevronDownMed' };
+const addIcon: IIconProps = { iconName: 'Add' };
+const deleteIcon: IIconProps = { iconName: 'Delete' };
 const headerStackStyles: IStackStyles = {
     root: {
-        background: DefaultPalette.themeDarker
+        background: DefaultPalette.themeDarker,
+        verticalAlign: 'center'
     },
 };
 
 const headerLabelStyles = mergeStyles({
     color: DefaultPalette.themeLighterAlt,
+    verticalAlign: 'center'
 });
 const headerStackTokens: IStackTokens = {
-    childrenGap: 10,
+    childrenGap: 5,
     padding: 10,
+
+};
+const headerStackItemStyles: IStackItemStyles = {
+    root: {
+        //   background: DefaultPalette.themePrimary,
+        // color: DefaultPalette.white,
+        // padding: 5,
+    },
 };
 
 const itemStackStyles: IStackStyles = {
@@ -37,9 +49,11 @@ const itemStackStyles: IStackStyles = {
 };
 
 const itemStackTokens: IStackTokens = {
-    childrenGap: 10,
-    padding: 10,
+    childrenGap: 5,
+    padding: 5,
 };
+
+
 
 
 function SectionComponent(props) {
@@ -65,6 +79,12 @@ function SectionComponent(props) {
     const onExpandButtonClick = () => {
         setIsSectionExpandedItems(!isExpanded);
     };
+    const onAddButtonClick = () => {
+        props.onAddSection(props.section.id, props.section.locationId);
+    };
+    const onDeleteButtonClick = () => {
+        // setIsSectionExpandedItems(!isExpanded);
+    };
 
     const updateParentStateCall = () => {
         // console.log("SectionComponent=>updateParentState");
@@ -76,7 +96,7 @@ function SectionComponent(props) {
             isExpanded: props.section.isExpanded,
             sectionItems: sectionItems,
         };
-        props.updateParentState(updatedSection);
+        props.onUpdateParentState(updatedSection);
     };
 
     React.useEffect(() => {
@@ -86,19 +106,24 @@ function SectionComponent(props) {
     return (
         <div>
             <div>
-                <Stack horizontal styles={headerStackStyles} tokens={headerStackTokens}>
+                <Stack horizontal disableShrink styles={headerStackStyles} tokens={headerStackTokens}>
+
                     {
                         isExpanded === false ?
-                            <IconButton iconProps={rightIcon} onClick={onCollapseButtonClick} />
+                            <Stack.Item align="auto" styles={headerStackItemStyles}><IconButton iconProps={rightIcon} onClick={onCollapseButtonClick} /></Stack.Item>
                             : undefined
                     }
                     {
                         isExpanded === true ?
-                            <IconButton iconProps={downIcon} onClick={onExpandButtonClick} />
+                            <Stack.Item align="auto" styles={headerStackItemStyles}><IconButton iconProps={downIcon} onClick={onExpandButtonClick} /></Stack.Item>
                             : undefined
                     }
-                    <Label className={headerLabelStyles} >{props.section.locationId} ({props.section.id}) {props.section.title}</Label>
+                    <Stack.Item align="baseline" grow styles={headerStackItemStyles}><Label className={headerLabelStyles} >{props.section.locationId} ({props.section.id}) {props.section.title}</Label></Stack.Item>
 
+                    <Stack.Item align="end" styles={headerStackItemStyles}>
+                        <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
+                        <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} />
+                    </Stack.Item>
                 </Stack>
             </div>
             {isExpanded === true ?

@@ -9,5 +9,6 @@ export interface ISectionComponentProps {
     // isExpanded: boolean;
     // sectionItems: ISectionItem[];
 
-    updateParentState(section: ISection): void;
+    onUpdateParentState(section: ISection): void;
+    onAddSection(id: number, locationId: number): void;
 }
