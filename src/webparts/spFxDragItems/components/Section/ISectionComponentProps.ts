@@ -11,4 +11,5 @@ export interface ISectionComponentProps {
 
     onUpdateParentState(section: ISection): void;
     onAddSection(id: number, locationId: number): void;
+    onDeleteSection(id: number, locationId: number, sectionItemId: number, sectionItemLocationId: number): void;
 }

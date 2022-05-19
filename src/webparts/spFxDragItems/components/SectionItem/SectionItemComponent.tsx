@@ -9,7 +9,7 @@ import { IIconProps } from 'office-ui-fabric-react/';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-function SectionComponent(props) {
+function SectionItemComponent(props) {
 
     // console.log("SectionComponent->");
     // console.log(id);
@@ -51,8 +51,9 @@ function SectionComponent(props) {
         transform: CSS.Transform.toString(transform),
     };
 
-    const onDeleteButtonClick = () => {
-        // setIsSectionExpandedItems(!isExpanded);
+    const onItemDeleteButtonClick = () => {
+        console.log("SectionItemComponent=>onDeleteButtonClick->");
+        props.onDeleteSectionItem(props.id, props.locationId);
     };
 
     return (
@@ -62,7 +63,7 @@ function SectionComponent(props) {
                     <Label>{props.locationId} ({props.id}) {props.title}</Label>
                 </Stack.Item>
                 <Stack.Item align="end" styles={stackItemStyles}>
-                    <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} />
+                    <IconButton iconProps={deleteIcon} onClick={onItemDeleteButtonClick} />
                 </Stack.Item>
             </Stack>
         </div >
@@ -70,4 +71,4 @@ function SectionComponent(props) {
     );
 }
 
-export default SectionComponent;
+export default SectionItemComponent;

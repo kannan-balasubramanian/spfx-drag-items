@@ -46,7 +46,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                             < Stack styles={stackStyles} tokens={itemAlignmentsStackTokens}>
                                 {
                                     this.state.sections.map((eachSection) => {
-                                        return (<div><SectionComponent onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSection={this.onAddNewSectionItemFromSection} section={eachSection} key={eachSection.locationId} /></div>);
+                                        return (<div><SectionComponent onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSection={this.onAddNewSectionItemFromSection} onDeleteSection={this.onDeleteNewSectionItemFromSection} section={eachSection} key={eachSection.locationId} /></div>);
                                     })
 
                                 }
@@ -71,6 +71,12 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
         let tempSectionsFromState = [...this.state.sections];
         tempSectionsFromState[sectionLocationId].sectionItems.push(newSectionItem);
+        this.setState({ sections: tempSectionsFromState });
+    }
+    private onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
+        console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+        let tempSectionsFromState = [...this.state.sections];
+        tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
         this.setState({ sections: tempSectionsFromState });
     }
 

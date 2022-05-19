@@ -11,7 +11,7 @@ import { IIconProps } from 'office-ui-fabric-react/';
 
 import SectionItemComponent from '../SectionItem/SectionItemComponent';
 import ISection from "../../models/ISection";
-import { closestCenter, DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
+import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import ISectionItem from '../../models/ISectionItem';
 
@@ -57,11 +57,25 @@ function SectionComponent(props) {
 
     const [sectionItems, setSectionItems] = React.useState(props.section.sectionItems);
     const [isExpanded, setIsSectionExpandedItems] = React.useState(props.section.isExpanded);
-    const sensors = [useSensor(PointerSensor)];
+    // const sensors = [useSensor(PointerSensor)];    
     const [isDragged, setIsDragged] = React.useState(false);
+
+    //This distance paramenter ensures that drag event is avoided until unless dragged for more than 7px. This is used to prevent the drag event applying for child elements like button
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: { y: 7 },
+            },
+        })
+    );
 
     // console.log("SectionComponent=>Entry->");
     // console.log(props.section.sectionItems);
+
+    const onComponentItemDragStart = (event) => {
+        // console.log("SectionComponent=>onComponentItemDragStart->");
+        // console.log(event.target);
+    };
 
     const onComponentItemDragEnd = ({ active, over }) => {
         if (active.id != over.id) {
@@ -88,7 +102,14 @@ function SectionComponent(props) {
         props.onAddSection(props.section.id, props.section.locationId);
     };
     const onDeleteButtonClick = () => {
-        // setIsSectionExpandedItems(!isExpanded);
+        // props.onDeleteSection(props.section.id, props.section.locationId);
+    };
+
+    const onSectionItemDelete = (sectionItemId, sectionItemLocationId) => {
+        console.log("SectionComponent=>onSectionItemDelete->");
+        console.log(sectionItemId);
+        console.log(sectionItemLocationId);
+        props.onDeleteSection(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
     };
 
     const updateParentStateCall = () => {
@@ -139,11 +160,11 @@ function SectionComponent(props) {
             </div>
             {isExpanded === true ?
                 <div>
-                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onComponentItemDragEnd} >
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
                         <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
                             <Stack styles={itemStackStyles} tokens={itemStackTokens}>
                                 {sectionItems.map((sectionItem) =>
-                                    <div key={sectionItem.locationId}><SectionItemComponent key={sectionItem.locationId} {...sectionItem} /></div>
+                                    <div key={sectionItem.locationId}><SectionItemComponent onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} {...sectionItem} /></div>
                                 )}
                             </Stack>
                         </SortableContext>

@@ -3,4 +3,6 @@ export interface ISectionItemComponentProps {
     title: string;
     locationId: number;
     sectionId: number;
+
+    onDeleteSectionItem(id: number, locationId: number): void;
 }
