@@ -13,6 +13,7 @@ import SectionItemComponent from '../SectionItem/SectionItemComponent';
 import ISection from "../../models/ISection";
 import { closestCenter, DndContext, PointerSensor, useSensor } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import ISectionItem from '../../models/ISectionItem';
 
 const rightIcon: IIconProps = { iconName: 'ChevronRightMed' };
 const downIcon: IIconProps = { iconName: 'ChevronDownMed' };
@@ -47,29 +48,33 @@ const itemStackStyles: IStackStyles = {
         background: DefaultPalette.themeTertiary,
     },
 };
-
 const itemStackTokens: IStackTokens = {
     childrenGap: 5,
     padding: 5,
 };
-
-
-
 
 function SectionComponent(props) {
 
     const [sectionItems, setSectionItems] = React.useState(props.section.sectionItems);
     const [isExpanded, setIsSectionExpandedItems] = React.useState(props.section.isExpanded);
     const sensors = [useSensor(PointerSensor)];
+    const [isDragged, setIsDragged] = React.useState(false);
+
+    // console.log("SectionComponent=>Entry->");
+    // console.log(props.section.sectionItems);
 
     const onComponentItemDragEnd = ({ active, over }) => {
-        // console.log(sectionItems);
         if (active.id != over.id) {
-            setSectionItems((sectionItems) => {
-                const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
-                const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
-                return arrayMove(sectionItems, oldIndex, newIndex);
-            });
+            setIsDragged(true);
+            const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
+            const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
+            let reIndexedSectionItems = arrayMove(sectionItems, oldIndex, newIndex);
+            setSectionItems(reIndexedSectionItems);
+            // setSectionItems((sectionItems) => {
+            //     const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
+            //     const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
+            //     return arrayMove(sectionItems, oldIndex, newIndex);
+            // });
         }
     };
 
@@ -87,8 +92,6 @@ function SectionComponent(props) {
     };
 
     const updateParentStateCall = () => {
-        // console.log("SectionComponent=>updateParentState");
-        // console.log(sectionItems);
         let updatedSection: ISection = {
             id: props.section.id,
             title: props.section.title,
@@ -99,15 +102,24 @@ function SectionComponent(props) {
         props.onUpdateParentState(updatedSection);
     };
 
+
     React.useEffect(() => {
-        updateParentStateCall();
+        // isDragged is used to prevent infinite loop since useEffect is called for every render even when the state is updated.
+        // Also isDragged variable is used as a state rather than variable since the value is not maintained during each render
+        if (isDragged == true) {
+            setIsDragged(false);
+            updateParentStateCall();
+        }
+        let updatedSectionItems: ISectionItem[] = props.section.sectionItems;
+        let currentSectionItems: ISectionItem[] = [...sectionItems];
+        currentSectionItems = updatedSectionItems;
+        setSectionItems(currentSectionItems);
     });
 
     return (
         <div>
             <div>
                 <Stack horizontal disableShrink styles={headerStackStyles} tokens={headerStackTokens}>
-
                     {
                         isExpanded === false ?
                             <Stack.Item align="auto" styles={headerStackItemStyles}><IconButton iconProps={rightIcon} onClick={onCollapseButtonClick} /></Stack.Item>
@@ -119,7 +131,6 @@ function SectionComponent(props) {
                             : undefined
                     }
                     <Stack.Item align="baseline" grow styles={headerStackItemStyles}><Label className={headerLabelStyles} >{props.section.locationId} ({props.section.id}) {props.section.title}</Label></Stack.Item>
-
                     <Stack.Item align="end" styles={headerStackItemStyles}>
                         <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
                         <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} />

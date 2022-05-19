@@ -9,8 +9,6 @@ import { ISectionsContainerComponentState } from './ISectionsContainerComponentS
 import ISection from "../../models/ISection";
 import ISectionItem from "../../models/ISectionItem";
 import SectionComponent from '../Section/SectionComponent';
-import { forEach } from 'lodash';
-
 
 const generateIcon: IIconProps = { iconName: 'SyncStatus' };
 const viewIcon: IIconProps = { iconName: 'EntryView' };
@@ -24,9 +22,6 @@ const itemAlignmentsStackTokens: IStackTokens = {
     padding: 10,
 };
 
-
-
-
 export default class SectionsContainerComponent extends React.Component<{}, ISectionsContainerComponentState> {
 
     constructor(state: ISectionsContainerComponentState) {
@@ -35,13 +30,15 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     }
 
     public render(): React.ReactElement<{}> {
-        console.log("SectionsContainerComponent=>render->");
-        console.log(this.state.sections);
+        // console.log("SectionsContainerComponent=>render->");
+        // if (this.state.sections.length > 0) {
+        //     console.log(this.state.sections[0].sectionItems);
+        // }
         return (
             <div>
                 <div>
                     <ActionButton iconProps={generateIcon} onClick={this.onGenerateSectionsButtonClicked.bind(this)} disabled={this.state.isGenerateSectionsButtonDisabled} >Generate Sections</ActionButton>
-                    <ActionButton iconProps={viewIcon} onClick={this.viewState.bind(this)} >View State</ActionButton>
+                    <ActionButton iconProps={viewIcon} onClick={this.viewState.bind(this)} >View 'State' in console</ActionButton>
                 </div>
                 <div>
                     <div>
@@ -65,35 +62,16 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     }
 
     private onAddNewSectionItemFromSection = (sectionId, sectionLocationId) => {
-        // console.log("SectionsContainerComponent->onAddNewSectionItemFromSection");
-        // console.log(sectionId);
-        // console.log(sectionLocationId);
-
         let newSectionItemId = this.randomNumberGenerator();
         let newSectionItemTitle = ("Item " + (this.state.sections.length + 1));
         let newSectionItemLocationId = (this.state.sections[sectionLocationId].sectionItems.length);
         let newSectionItemSectionId = sectionId;
 
         let newSectionItem: ISectionItem = { id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionItemSectionId };
-        // console.log(this.state.sections[sectionLocationId]);
-
-
-
 
         let tempSectionsFromState = [...this.state.sections];
-        console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->tempSectionsFromState");
-        console.log(tempSectionsFromState);
-        let tempSectionItemFromTempSectionsFromState = [...tempSectionsFromState[sectionLocationId].sectionItems];
-        console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->tempSectionItemFromTempSectionsFromState");
-        console.log(tempSectionItemFromTempSectionsFromState);
-        tempSectionItemFromTempSectionsFromState.push(newSectionItem);
-        tempSectionsFromState[sectionLocationId].sectionItems = tempSectionItemFromTempSectionsFromState;
-        console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->tempSectionItemFromTempSectionsFromState");
-        console.log(tempSectionItemFromTempSectionsFromState);
-        console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->tempSectionsFromState");
-        console.log(tempSectionsFromState);
+        tempSectionsFromState[sectionLocationId].sectionItems.push(newSectionItem);
         this.setState({ sections: tempSectionsFromState });
-        // console.log(this.state.sections[sectionLocationId]);
     }
 
     private onUpdateParentStateCallFromSection = (section: ISection) => {
@@ -105,8 +83,8 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         let tempSectionsFromState = [...this.state.sections];
         tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
 
-        // this.setState({ sections: tempSectionsFromState });
-        // console.log(tempSectionItems.sectionItems);
+        this.setState({ sections: tempSectionsFromState });
+
     }
 
     private onGenerateSectionsButtonClicked(event?: React.MouseEvent<HTMLButtonElement>) {
@@ -114,7 +92,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         let newSections: ISection[] = [];
         let sectionLocationId: number = 0;
 
-        for (let indexX = 0; indexX < 2; indexX++) {
+        for (let indexX = 0; indexX < 1; indexX++) {
             let sectionItemLocationId: number = 0;
             let newSectionItems: ISectionItem[] = [];
             let newSectionId: number = this.randomNumberGenerator();
@@ -124,16 +102,17 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                 newSectionItems.push({ id: this.randomNumberGenerator(), title: (" Item " + (indexY + 1)), locationId: sectionItemLocationId, sectionId: newSectionId });
                 sectionItemLocationId++;
             }
-            newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: false, sectionItems: newSectionItems });
+            newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });
             sectionLocationId++;
         }
         this.setState({ sections: newSections });
-        // console.log("SectionsContainerComponent=>generateSectionsButtonClicked->");
-        // console.log(newSections);
     }
 
     private viewState() {
-        console.log(this.state.sections);
+        console.log("SectionsContainerComponent=>viewState->");
+        if (this.state.sections.length > 0) {
+            console.log(this.state.sections[0].sectionItems);
+        }
     }
 
     private randomNumberGenerator(): number {
