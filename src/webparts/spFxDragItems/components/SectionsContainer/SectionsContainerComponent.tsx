@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { ActionButton } from 'office-ui-fabric-react/lib/Button';
+import { ActionButton, PrimaryButton, DefaultButton } from 'office-ui-fabric-react/lib/Button';
 import { IIconProps } from 'office-ui-fabric-react/';
-import { Stack, IStackStyles, IStackTokens, IStackItemStyles } from 'office-ui-fabric-react';
+import { Stack, IStackStyles, IStackTokens, IStackItemStyles, Modal, FontIcon, mergeStyles, Label } from 'office-ui-fabric-react';
 import { DefaultPalette } from 'office-ui-fabric-react';
 
 import { ISectionsContainerComponentState } from './ISectionsContainerComponentState';
@@ -12,21 +12,65 @@ import SectionComponent from '../Section/SectionComponent';
 
 const generateIcon: IIconProps = { iconName: 'SyncStatus' };
 const viewIcon: IIconProps = { iconName: 'EntryView' };
+const yesIcon: IIconProps = { iconName: 'Accept' };
+const noIcon: IIconProps = { iconName: 'CalculatorMultiply' };
+
+
 const stackStyles: IStackStyles = {
     root: {
         background: DefaultPalette.neutralLight,
     },
 };
-const itemAlignmentsStackTokens: IStackTokens = {
-    childrenGap: 5,
+const stackTokens: IStackTokens = {
+    childrenGap: 10,
     padding: 10,
 };
+
+const deleteModalHeaderStackStyles: IStackStyles = {
+    root: {
+        background: DefaultPalette.themeDarker,
+        verticalAlign: 'center'
+    },
+};
+const deleteModalHeaderStackTokens: IStackTokens = {
+    childrenGap: 5,
+    padding: 0,
+};
+const deleteModalItemStackTokens: IStackTokens = {
+    childrenGap: 15,
+    padding: 10,
+};
+const deleteModalStackItemStyles: IStackStyles = {
+    root: {
+        verticalAlign: 'center',
+        textAlign: 'center',
+    },
+};
+const deleteModalHeaderStackItemTokens: IStackTokens = {
+    childrenGap: 5,
+    padding: 10,
+
+};
+const deleteModalHeaderIconClass = mergeStyles({
+    fontSize: 30,
+    height: 20,
+    width: 20,
+    margin: '5px 0 0 5px',
+    color: DefaultPalette.themeLighterAlt,
+});
+const deleteModalHeaderLabelStyles = mergeStyles({
+    color: DefaultPalette.themeLighterAlt,
+    fontSize: 20,
+    textAlign: 'center',
+    margin: '0px 0px 11px -17px'
+});
+
 
 export default class SectionsContainerComponent extends React.Component<{}, ISectionsContainerComponentState> {
 
     constructor(state: ISectionsContainerComponentState) {
         super(state);
-        this.state = { sections: [], isGenerateSectionsButtonDisabled: false };
+        this.state = { sections: [], isGenerateSectionsButtonDisabled: false, deleteSectionItemModalWarningText: "", isDeleteSectionItemModalOpen: false, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 };
     }
 
     public render(): React.ReactElement<{}> {
@@ -43,7 +87,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                 <div>
                     <div>
                         {this.state.sections.length > 0 ?
-                            < Stack styles={stackStyles} tokens={itemAlignmentsStackTokens}>
+                            < Stack styles={stackStyles} tokens={stackTokens}>
                                 {
                                     this.state.sections.map((eachSection) => {
                                         return (<div><SectionComponent onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSection={this.onAddNewSectionItemFromSection} onDeleteSection={this.onDeleteNewSectionItemFromSection} section={eachSection} key={eachSection.locationId} /></div>);
@@ -55,7 +99,33 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                         }
                     </div>
                 </div>
-                {/* <SectionComponent /> */}
+                <div>
+                    <Modal isOpen={this.state.isDeleteSectionItemModalOpen}>
+                        <Stack>
+                            <Stack horizontal styles={deleteModalHeaderStackStyles} tokens={deleteModalHeaderStackTokens}>
+                                <Stack.Item align="baseline" tokens={deleteModalHeaderStackItemTokens}>
+                                    <FontIcon aria-label="Warning12" iconName="Warning12" className={deleteModalHeaderIconClass} />
+                                </Stack.Item>
+                                <Stack.Item align="end" grow >
+                                    <Label className={deleteModalHeaderLabelStyles}>Delete Item?</Label>
+                                </Stack.Item>
+                            </Stack>
+                            <Stack>
+                                <Stack.Item align='auto' tokens={deleteModalHeaderStackItemTokens}>
+                                    Are you sure you want to delete '{this.state.deleteSectionItemModalWarningText}' ?
+                                </Stack.Item>
+                            </Stack>
+                            <Stack styles={deleteModalStackItemStyles} tokens={deleteModalItemStackTokens}>
+                                <Stack.Item>
+                                    <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={this.onConfirmDeleteNewSectionItemFromSection}></PrimaryButton>
+                                </Stack.Item>
+                                <Stack.Item>
+                                    <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={this.onConfirmNotDeleteNewSectionItemFromSection}></DefaultButton>
+                                </Stack.Item>
+                            </Stack>
+                        </Stack>
+                    </Modal>
+                </div>
             </div >
 
         );
@@ -74,10 +144,26 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         this.setState({ sections: tempSectionsFromState });
     }
     private onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
-        console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+        let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title + ' in ' + this.state.sections[sectionLocationId].title;
+        this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+        // let tempSectionsFromState = [...this.state.sections];
+        // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
+        // this.setState({ sections: tempSectionsFromState });
+    }
+    private onConfirmDeleteNewSectionItemFromSection = () => {
+        this.setState({ isDeleteSectionItemModalOpen: false });
+        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
         let tempSectionsFromState = [...this.state.sections];
-        tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
+        tempSectionsFromState[this.state.sectionIndexToDelete].sectionItems.splice(this.state.sectionItemIndexToDelete, 1);
         this.setState({ sections: tempSectionsFromState });
+    }
+    private onConfirmNotDeleteNewSectionItemFromSection = () => {
+        this.setState({ isDeleteSectionItemModalOpen: false });
+        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+        // let tempSectionsFromState = [...this.state.sections];
+        // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
+        // this.setState({ sections: tempSectionsFromState });
     }
 
     private onUpdateParentStateCallFromSection = (section: ISection) => {
@@ -98,14 +184,14 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         let newSections: ISection[] = [];
         let sectionLocationId: number = 0;
 
-        for (let indexX = 0; indexX < 1; indexX++) {
+        for (let indexX = 0; indexX < 3; indexX++) {
             let sectionItemLocationId: number = 0;
             let newSectionItems: ISectionItem[] = [];
             let newSectionId: number = this.randomNumberGenerator();
             let newSectionTitle: string = ("Section " + (indexX + 1));
 
             for (let indexY = 0; indexY < 4; indexY++) {
-                newSectionItems.push({ id: this.randomNumberGenerator(), title: (" Item " + (indexY + 1)), locationId: sectionItemLocationId, sectionId: newSectionId });
+                newSectionItems.push({ id: this.randomNumberGenerator(), title: ("Item " + (indexY + 1)), locationId: sectionItemLocationId, sectionId: newSectionId });
                 sectionItemLocationId++;
             }
             newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });
