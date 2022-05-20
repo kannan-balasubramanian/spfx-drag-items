@@ -1,4 +1,5 @@
 import ISection from "../../models/ISection";
+import ISectionItemTitle from "../../models/ISectionItemTitle";
 export interface ISectionsContainerComponentState {
     sections: ISection[];
     sectionIndexToDelete: number;
@@ -6,4 +7,5 @@ export interface ISectionsContainerComponentState {
     isGenerateSectionsButtonDisabled: boolean;
     deleteSectionItemModalWarningText: string;
     isDeleteSectionItemModalOpen: boolean;
+    sectionItemTitles: ISectionItemTitle[];
 }

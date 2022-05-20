@@ -1,4 +1,5 @@
 import ISectionItem from "../../models/ISectionItem";
+import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 export interface ISectionComponentState {
     id: number;
@@ -6,4 +7,5 @@ export interface ISectionComponentState {
     locationId: number;
     isExpanded: boolean;
     sectionItems: ISectionItem[];
+    sectionItemTitles: ISectionItemTitle[];
 }

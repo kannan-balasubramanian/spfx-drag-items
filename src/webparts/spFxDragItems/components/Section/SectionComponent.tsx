@@ -106,9 +106,9 @@ function SectionComponent(props) {
     };
 
     const onSectionItemDelete = (sectionItemId, sectionItemLocationId) => {
-        console.log("SectionComponent=>onSectionItemDelete->");
-        console.log(sectionItemId);
-        console.log(sectionItemLocationId);
+        // console.log("SectionComponent=>onSectionItemDelete->");
+        // console.log(sectionItemId);
+        // console.log(sectionItemLocationId);
         props.onDeleteSection(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
     };
 
@@ -120,6 +120,33 @@ function SectionComponent(props) {
             isExpanded: props.section.isExpanded,
             sectionItems: sectionItems,
         };
+        props.onUpdateParentState(updatedSection);
+    };
+
+    const updateParentStateOnSectionItemTitleChange = (id: number, locationId: number, newTitleText: string, newTitleKey: number) => {
+        // console.log("SectionComponent=>updateParentStateOnSectionItemTitleChange->");
+        // console.log(id);
+        // console.log(locationId);
+        // console.log(newTitleText);
+        // console.log(newTitleKey);
+        // console.log(sectionItems);
+
+        // let updatedSectionItem: ISectionItem = sectionItems[props.section.locationId];
+        // // console.log(updatedSectionItem.title);
+        // updatedSectionItem.title = newTitleText;
+
+        let updatedSectionItems: ISectionItem[] = props.section.sectionItems;
+        updatedSectionItems[locationId].title = newTitleText;
+        // console.log(updatedSectionItem);
+        // props.onUpdateParentState(updatedSectionItem);
+        let updatedSection: ISection = {
+            id: props.section.id,
+            title: props.section.title,
+            locationId: props.section.locationId,
+            isExpanded: props.section.isExpanded,
+            sectionItems: updatedSectionItems,
+        };
+        // console.log(updatedSection);
         props.onUpdateParentState(updatedSection);
     };
 
@@ -164,7 +191,7 @@ function SectionComponent(props) {
                         <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
                             <Stack styles={itemStackStyles} tokens={itemStackTokens}>
                                 {sectionItems.map((sectionItem) =>
-                                    <div key={sectionItem.locationId}><SectionItemComponent onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} {...sectionItem} /></div>
+                                    <div key={sectionItem.locationId}><SectionItemComponent onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} sectionItemTitles={props.sectionItemTitles} onTitleChange={updateParentStateOnSectionItemTitleChange} {...sectionItem} /></div>
                                 )}
                             </Stack>
                         </SortableContext>

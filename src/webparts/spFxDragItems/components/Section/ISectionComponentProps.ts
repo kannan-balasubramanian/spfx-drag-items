@@ -1,8 +1,10 @@
-import ISectionItem from "../../models/ISectionItem";
+// import ISectionItem from "../../models/ISectionItem";
 import ISection from "../../models/ISection";
+import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 export interface ISectionComponentProps {
     section: ISection;
+    sectionItemTitles: ISectionItemTitle[];
     // id: number;
     // title: string;
     // locationId: number;

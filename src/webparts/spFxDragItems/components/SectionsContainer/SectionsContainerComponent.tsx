@@ -9,6 +9,7 @@ import { ISectionsContainerComponentState } from './ISectionsContainerComponentS
 import ISection from "../../models/ISection";
 import ISectionItem from "../../models/ISectionItem";
 import SectionComponent from '../Section/SectionComponent';
+import ISectionItemTitle from '../../models/ISectionItemTitle';
 
 const generateIcon: IIconProps = { iconName: 'SyncStatus' };
 const viewIcon: IIconProps = { iconName: 'EntryView' };
@@ -70,7 +71,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
     constructor(state: ISectionsContainerComponentState) {
         super(state);
-        this.state = { sections: [], isGenerateSectionsButtonDisabled: false, deleteSectionItemModalWarningText: "", isDeleteSectionItemModalOpen: false, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 };
+        this.state = { sectionItemTitles: [], sections: [], isGenerateSectionsButtonDisabled: false, deleteSectionItemModalWarningText: "", isDeleteSectionItemModalOpen: false, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 };
     }
 
     public render(): React.ReactElement<{}> {
@@ -90,7 +91,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                             < Stack styles={stackStyles} tokens={stackTokens}>
                                 {
                                     this.state.sections.map((eachSection) => {
-                                        return (<div><SectionComponent onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSection={this.onAddNewSectionItemFromSection} onDeleteSection={this.onDeleteNewSectionItemFromSection} section={eachSection} key={eachSection.locationId} /></div>);
+                                        return (<div><SectionComponent onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSection={this.onAddNewSectionItemFromSection} onDeleteSection={this.onDeleteNewSectionItemFromSection} sectionItemTitles={this.state.sectionItemTitles} section={eachSection} key={eachSection.locationId} /></div>);
                                     })
 
                                 }
@@ -182,7 +183,16 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     private onGenerateSectionsButtonClicked(event?: React.MouseEvent<HTMLButtonElement>) {
         this.setState({ isGenerateSectionsButtonDisabled: true });
         let newSections: ISection[] = [];
+        let newSectionItemTitles: ISectionItemTitle[] = [];
         let sectionLocationId: number = 0;
+
+        for (let indexA = 0; indexA < 100; indexA++) {
+            let newSectionItemTitleId: number = this.randomNumberGenerator();
+            let newSectionItemTitleTitle: string = ("Item " + (indexA + 1));
+            newSectionItemTitles.push({ id: newSectionItemTitleId, title: newSectionItemTitleTitle });
+        }
+
+        this.setState({ sectionItemTitles: newSectionItemTitles });
 
         for (let indexX = 0; indexX < 3; indexX++) {
             let sectionItemLocationId: number = 0;
@@ -196,20 +206,21 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
             }
             newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });
             sectionLocationId++;
+
+            this.setState({ sections: newSections });
         }
-        this.setState({ sections: newSections });
     }
 
     private viewState() {
         console.log("SectionsContainerComponent=>viewState->");
         if (this.state.sections.length > 0) {
-            console.log(this.state.sections[0].sectionItems);
+            console.log(this.state.sections);
         }
     }
 
     private randomNumberGenerator(): number {
         let min = 1;
-        let max = 99;
+        let max = 999;
         let rand = min + (Math.random() * (max - min));
         return Math.round(rand);
     }
