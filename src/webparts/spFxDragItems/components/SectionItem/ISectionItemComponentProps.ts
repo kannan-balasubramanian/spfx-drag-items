@@ -2,7 +2,7 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 export interface ISectionItemComponentProps {
     id: number;
-    title: string;
+    title: ISectionItemTitle;
     locationId: number;
     sectionId: number;
 

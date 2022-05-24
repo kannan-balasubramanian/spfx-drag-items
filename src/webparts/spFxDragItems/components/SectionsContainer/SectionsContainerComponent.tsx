@@ -12,10 +12,10 @@ import SectionComponent from '../Section/SectionComponent';
 import ISectionItemTitle from '../../models/ISectionItemTitle';
 
 const generateIcon: IIconProps = { iconName: 'SyncStatus' };
-const viewIcon: IIconProps = { iconName: 'EntryView' };
 const yesIcon: IIconProps = { iconName: 'Accept' };
 const noIcon: IIconProps = { iconName: 'CalculatorMultiply' };
 
+const viewIcon: IIconProps = { iconName: 'EntryView' };
 
 const stackStyles: IStackStyles = {
     root: {
@@ -134,7 +134,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
     private onAddNewSectionItemFromSection = (sectionId, sectionLocationId) => {
         let newSectionItemId = this.randomNumberGenerator();
-        let newSectionItemTitle = ("Item " + (this.state.sections.length + 1));
+        let newSectionItemTitle = { id: this.state.sectionItemTitles[(this.state.sections.length + 1)].id, title: this.state.sectionItemTitles[(this.state.sections.length + 1)].title };
         let newSectionItemLocationId = (this.state.sections[sectionLocationId].sectionItems.length);
         let newSectionItemSectionId = sectionId;
 
@@ -194,14 +194,14 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
         this.setState({ sectionItemTitles: newSectionItemTitles });
 
-        for (let indexX = 0; indexX < 3; indexX++) {
+        for (let indexX = 0; indexX < 4; indexX++) {
             let sectionItemLocationId: number = 0;
             let newSectionItems: ISectionItem[] = [];
             let newSectionId: number = this.randomNumberGenerator();
             let newSectionTitle: string = ("Section " + (indexX + 1));
 
-            for (let indexY = 0; indexY < 4; indexY++) {
-                newSectionItems.push({ id: this.randomNumberGenerator(), title: ("Item " + (indexY + 1)), locationId: sectionItemLocationId, sectionId: newSectionId });
+            for (let indexY = 0; indexY < 5; indexY++) {
+                newSectionItems.push({ id: this.randomNumberGenerator(), title: { id: newSectionItemTitles[indexY].id, title: newSectionItemTitles[indexY].title }, locationId: sectionItemLocationId, sectionId: newSectionId });
                 sectionItemLocationId++;
             }
             newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });

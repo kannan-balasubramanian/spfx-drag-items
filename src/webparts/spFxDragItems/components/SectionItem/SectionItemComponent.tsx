@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Stack, IStackStyles, IStackTokens, IStackItemStyles } from 'office-ui-fabric-react';
+import { Stack, IStackStyles, IStackTokens, IStackItemStyles, mergeStyles } from 'office-ui-fabric-react';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { DefaultPalette } from 'office-ui-fabric-react';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
@@ -11,16 +11,18 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 function SectionItemComponent(props) {
 
-    // console.log("SectionComponent->");
-    // console.log(props.title);
-    // console.log(locationId);
+    console.log("SectionComponent->");
+    console.log(props.title);
+    // console.log(props.sectionItemTitles);
     // console.log(sectionId);
+    const [sectionItemTitle, setSectionItemTitle] = React.useState(props.title);
 
     const deleteIcon: IIconProps = { iconName: 'Delete' };
-    // const downIcon: IIconProps = { iconName: 'ChevronDownMed' };
+    const dragIcon: IIconProps = { iconName: 'DragObject' };
 
     const stackStyles: IStackStyles = {
         root: {
@@ -41,7 +43,9 @@ function SectionItemComponent(props) {
         },
     };
 
-
+    const tagPickerDivStyles = mergeStyles({
+        width: 20
+    });
 
     const {
         attributes,
@@ -94,17 +98,53 @@ function SectionItemComponent(props) {
         if (picker.current && listContainsTagList(item, picker.current.items)) {
             return null;
         }
-        console.log("SectionItemComponent->onItemSelected");
-        console.log(item);
+        // console.log("SectionItemComponent->onItemSelected");
+        // console.log(item);
         props.onTitleChange(props.id, props.locationId, item.name, item.key);
         return item;
     }, []);
 
+    const filterSectionTitle = (type: number) => {
+        try {
+            console.log("SectionComponent=>filterSectionTitle->");
+            // console.log(props.title);
+            // console.log(props.sectionItemTitles);
+            if (type === 0) {
+                let id = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].id;
+                if (sectionItemTitle.id !== id) {
+                    console.log(id);
+                }
+                return id;
+            } else if (type === 1) {
+                let title = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].title;
+                if (sectionItemTitle.title !== title) {
+                    console.log(title);
+                }
+                return title;
+            }
+        } catch (Error) {
+            console.log("Error at SectionComponent=>filterSectionTitle-> " + Error);
+        }
+    };
+
+    React.useEffect(() => {
+        try {
+            // let updatedSectionItemTitle = props.title;
+            // let currentSectionItemTitle = [...sectionItemTitle];
+            // updatedSectionItemTitle = currentSectionItemTitle;
+            setSectionItemTitle(props.title);
+        } catch (Error) {
+            console.log("Error at SectionComponent=>useEffect-> " + Error);
+        }
+    });
+
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Stack horizontal disableShrink styles={stackStyles} tokens={stackTokens}>
+                <Stack.Item align="auto" styles={stackItemStyles}>
+                    <Label>{props.locationId} ({props.id}) {sectionItemTitle.title}({sectionItemTitle.id})</Label>
+                </Stack.Item>
                 <Stack.Item align="auto" grow styles={stackItemStyles}>
-                    <Label>{props.locationId} ({props.id}) {props.title}</Label>
                     <TagPicker
                         removeButtonAriaLabel="Remove"
                         onResolveSuggestions={filterSuggestedTags}
@@ -117,10 +157,11 @@ function SectionItemComponent(props) {
                             id: 'picker1',
                         }}
                         onItemSelected={onItemSelected}
-                        defaultSelectedItems={[{ "key": props.sectionItemTitles.filter(sectionItemTitle => sectionItemTitle.title == props.title)[0].id, name: props.sectionItemTitles.filter(sectionItemTitle => sectionItemTitle.title == props.title)[0].title }]}
+                        defaultSelectedItems={[{ "key": filterSectionTitle(0), name: filterSectionTitle(1) }]}
                     />
                 </Stack.Item>
                 <Stack.Item align="end" styles={stackItemStyles}>
+                    {/* <IconButton iconProps={dragIcon} /> */}
                     <IconButton iconProps={deleteIcon} onClick={onItemDeleteButtonClick} />
                 </Stack.Item>
             </Stack>

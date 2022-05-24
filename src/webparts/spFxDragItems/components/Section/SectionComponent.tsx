@@ -14,6 +14,7 @@ import ISection from "../../models/ISection";
 import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import ISectionItem from '../../models/ISectionItem';
+import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 const rightIcon: IIconProps = { iconName: 'ChevronRightMed' };
 const downIcon: IIconProps = { iconName: 'ChevronDownMed' };
@@ -123,11 +124,11 @@ function SectionComponent(props) {
         props.onUpdateParentState(updatedSection);
     };
 
-    const updateParentStateOnSectionItemTitleChange = (id: number, locationId: number, newTitleText: string, newTitleKey: number) => {
+    const updateParentStateOnSectionItemTitleChange = (id: number, locationId: number, newTitle: string, newTitleKey: number) => {
         // console.log("SectionComponent=>updateParentStateOnSectionItemTitleChange->");
         // console.log(id);
         // console.log(locationId);
-        // console.log(newTitleText);
+        // console.log(newTitle);
         // console.log(newTitleKey);
         // console.log(sectionItems);
 
@@ -136,9 +137,11 @@ function SectionComponent(props) {
         // updatedSectionItem.title = newTitleText;
 
         let updatedSectionItems: ISectionItem[] = props.section.sectionItems;
-        updatedSectionItems[locationId].title = newTitleText;
+        let updateSectionItemsTitle: ISectionItemTitle = { id: newTitleKey, title: newTitle };
+        updatedSectionItems[locationId].title = updateSectionItemsTitle;
         // console.log(updatedSectionItem);
         // props.onUpdateParentState(updatedSectionItem);
+
         let updatedSection: ISection = {
             id: props.section.id,
             title: props.section.title,
