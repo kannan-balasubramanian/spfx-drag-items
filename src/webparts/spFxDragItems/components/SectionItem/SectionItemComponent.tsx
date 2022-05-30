@@ -15,8 +15,8 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 function SectionItemComponent(props) {
 
-    console.log("SectionComponent->");
-    console.log(props.locationId + "=>" + props.title.title + "|" + props.title.title);
+    // console.log("SectionComponent->");
+    // console.log(props.locationId + "=>" + props.title.title + "|" + props.title.title);
 
     // console.log(props.sectionItemTitles);
     // console.log(sectionId);
@@ -138,13 +138,13 @@ function SectionItemComponent(props) {
             console.log("Error at SectionComponent=>useEffect-> " + Error);
         }
     });
-    console.log(props.locationId + "=>" + filterSectionTitle(1) + "|" + filterSectionTitle(0));
+    // console.log(props.locationId + "=>" + filterSectionTitle(1) + "|" + filterSectionTitle(0));
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Stack horizontal disableShrink styles={stackStyles} tokens={stackTokens}>
-                <Stack.Item align="auto" styles={stackItemStyles}>
+                {/* <Stack.Item align="auto" styles={stackItemStyles}>
                     <Label>{props.locationId} ({props.id}) {sectionItemTitle.title}({sectionItemTitle.id})</Label>
-                </Stack.Item>
+                </Stack.Item> */}
                 <Stack.Item align="auto" grow styles={stackItemStyles}>
                     <TagPicker
                         removeButtonAriaLabel="Remove"

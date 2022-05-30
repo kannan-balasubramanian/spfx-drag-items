@@ -145,7 +145,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         this.setState({ sections: tempSectionsFromState });
     }
     private onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
-        let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title + ' in ' + this.state.sections[sectionLocationId].title;
+        let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + this.state.sections[sectionLocationId].title;
         this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
         // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
         // let tempSectionsFromState = [...this.state.sections];
