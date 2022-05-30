@@ -16,7 +16,8 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 function SectionItemComponent(props) {
 
     console.log("SectionComponent->");
-    console.log(props.title);
+    console.log(props.locationId + "=>" + props.title.title + "|" + props.title.title);
+
     // console.log(props.sectionItemTitles);
     // console.log(sectionId);
     const [sectionItemTitle, setSectionItemTitle] = React.useState(props.title);
@@ -106,19 +107,19 @@ function SectionItemComponent(props) {
 
     const filterSectionTitle = (type: number) => {
         try {
-            console.log("SectionComponent=>filterSectionTitle->");
+            // console.log("SectionComponent=>filterSectionTitle->");
             // console.log(props.title);
             // console.log(props.sectionItemTitles);
             if (type === 0) {
                 let id = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].id;
                 if (sectionItemTitle.id !== id) {
-                    console.log(id);
+                    // console.log(id);
                 }
                 return id;
             } else if (type === 1) {
                 let title = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].title;
                 if (sectionItemTitle.title !== title) {
-                    console.log(title);
+                    // console.log(title);
                 }
                 return title;
             }
@@ -137,7 +138,7 @@ function SectionItemComponent(props) {
             console.log("Error at SectionComponent=>useEffect-> " + Error);
         }
     });
-
+    console.log(props.locationId + "=>" + filterSectionTitle(1) + "|" + filterSectionTitle(0));
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Stack horizontal disableShrink styles={stackStyles} tokens={stackTokens}>
@@ -157,7 +158,8 @@ function SectionItemComponent(props) {
                             id: 'picker1',
                         }}
                         onItemSelected={onItemSelected}
-                        defaultSelectedItems={[{ "key": filterSectionTitle(0), name: filterSectionTitle(1) }]}
+                        selectedItems={[{ "key": filterSectionTitle(0), name: filterSectionTitle(1) }]}
+                    // defaultSelectedItems={[{ "key": filterSectionTitle(0), name: filterSectionTitle(1) }]}
                     />
                 </Stack.Item>
                 <Stack.Item align="end" styles={stackItemStyles}>
