@@ -5,7 +5,7 @@ import { Label } from 'office-ui-fabric-react/lib/Label';
 import { DefaultPalette } from 'office-ui-fabric-react';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
 import { IIconProps } from 'office-ui-fabric-react/';
-import { TagPicker, IBasePicker, ITag, IInputProps, IBasePickerSuggestionsProps, BasePicker } from 'office-ui-fabric-react/lib/Pickers';
+import { TagPicker, IBasePicker, ITag, IInputProps, IBasePickerSuggestionsProps } from 'office-ui-fabric-react/lib/Pickers';
 import { useBoolean } from '@fluentui/react-hooks';
 
 import { useSortable } from '@dnd-kit/sortable';
@@ -15,11 +15,11 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 function SectionItemComponent(props) {
 
-    console.log("SectionItemComponent->" + props.id);
-    console.log(props.title);
+    // console.log("SectionComponent->");
+    // console.log(props.locationId + "=>" + props.title.title + "|" + props.title.title);
 
     // console.log(props.sectionItemTitles);
-
+    // console.log(sectionId);
     const [sectionItemTitle, setSectionItemTitle] = React.useState(props.title);
 
     const deleteIcon: IIconProps = { iconName: 'Delete' };
@@ -63,7 +63,6 @@ function SectionItemComponent(props) {
     };
 
     const onAddButtonClick = () => {
-        // console.log("SectionItemComponent=>onAddButtonClick->" + props.id + "|" + props.locationId);
         props.onAddSectionItem(props.id, props.locationId);
     };
 
@@ -76,21 +75,24 @@ function SectionItemComponent(props) {
         suggestionsHeaderText: 'Suggested tags',
         noResultsFoundText: 'No color tags found',
     };
-    const pickerTags: ITag[] = props.sectionItemTitles.map(item => ({ key: item.id, name: item.title }));
+
+    const testTags: ITag[] = props.sectionItemTitles.map(item => ({ key: item.id, name: item.title }));
     const inputProps: IInputProps = {
         onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
         onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
     };
     const [tagPicker, { toggle: toggleIsTagPickerVisible }] = useBoolean(false);
+
     const listContainsTagList = (tag: ITag, tagList?: ITag[]) => {
         if (!tagList || !tagList.length || tagList.length === 0) {
             return false;
         }
         return tagList.some(compareTag => compareTag.key === tag.key);
     };
+
     const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
         return filterText
-            ? pickerTags.filter(
+            ? testTags.filter(
                 tag => tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 && !listContainsTagList(tag, tagList),
             )
             : [];
@@ -99,37 +101,36 @@ function SectionItemComponent(props) {
     const getTextFromItem = (item: ITag) => item.name;
     const picker = React.useRef<IBasePicker<ITag>>(null);
     const onItemSelected = React.useCallback((item: ITag): ITag | null => {
+        // console.log("SectionItemComponent->onItemSelected");
+        // console.log(item);
         if (picker.current && listContainsTagList(item, picker.current.items)) {
+            // console.log("SectionItemComponent->onItemSelected->return null");
             return null;
         }
-        props.onTitleChange(props.id, props.locationId, item.name, item.key);
+        // props.onTitleChange(props.id, props.locationId, item.name, item.key);
+        // console.log("SectionItemComponent->onItemSelected->return item");
         return item;
     }, []);
 
     const filterSectionTitle = (type: number) => {
         try {
-            // console.log("SectionComponent=>filterSectionTitle->testTags");
-            // console.log(props.title);
+            console.log("SectionComponent=>filterSectionTitle->testTags");
+            // console.log(testTags);
             // console.log(props.sectionItemTitles);
             if (type === 0) {
                 // let id = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].id;                
-                let id = pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key;
-                // console.log(props.title.id + "|" + id);
+                let id = testTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == sectionItemTitle.id)[0].key;
+                console.log(id);
                 return id;
             } else if (type === 1) {
                 // let title = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].title;
-                let title = pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.name == props.title.title)[0].name;
-                // console.log(props.title.title + "|" + title);
+                let title = testTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.name == sectionItemTitle.title)[0].name;
+                console.log(title);
                 return title;
             }
         } catch (Error) {
             console.log("Error at SectionComponent=>filterSectionTitle-> " + Error);
         }
-    };
-
-    const onItemChanged = (selectedItems: ITag[]): void => {
-        console.log("SectionComponent=>onItemChanged->");
-        console.log(selectedItems);
     };
 
     React.useEffect(() => {
@@ -148,49 +149,24 @@ function SectionItemComponent(props) {
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Stack horizontal disableShrink styles={stackStyles} tokens={stackTokens}>
                 <Stack.Item align="auto" styles={stackItemStyles}>
-                    {props.title === undefined ?
-                        <Label>{props.locationId} ({props.id})</Label>
-                        : <Label>{props.locationId} ({props.id}) {props.title.title} ({props.title.id})</Label>}
+                    <Label>{props.locationId} ({props.id}) {sectionItemTitle.title}({sectionItemTitle.id})</Label>
                 </Stack.Item>
                 <Stack.Item align="auto" grow styles={stackItemStyles}>
-                    {props.title == undefined ?
-                        <TagPicker
-                            removeButtonAriaLabel="Remove"
-                            onResolveSuggestions={filterSuggestedTags}
-                            getTextFromItem={getTextFromItem}
-                            pickerSuggestionsProps={pickerSuggestionsProps}
-                            itemLimit={1}
-                            disabled={tagPicker}
-                            inputProps={{
-                                ...inputProps,
-                                id: 'picker1',
-                            }}
-                            onItemSelected={onItemSelected}
-                        // onChange={onItemChanged}
-                        // selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
-                        // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
-                        // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
-                        />
-                        :
-                        <TagPicker
-                            removeButtonAriaLabel="Remove"
-                            onResolveSuggestions={filterSuggestedTags}
-                            getTextFromItem={getTextFromItem}
-                            pickerSuggestionsProps={pickerSuggestionsProps}
-                            itemLimit={1}
-                            disabled={tagPicker}
-                            inputProps={{
-                                ...inputProps,
-                                id: 'picker1',
-                            }}
-                            onItemSelected={onItemSelected}
-                            // onChange={onItemChanged}
-                            selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
-                        // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
-                        // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
-                        />
-                    }
-
+                    <TagPicker
+                        removeButtonAriaLabel="Remove"
+                        onResolveSuggestions={filterSuggestedTags}
+                        getTextFromItem={getTextFromItem}
+                        pickerSuggestionsProps={pickerSuggestionsProps}
+                        itemLimit={1}
+                        disabled={tagPicker}
+                        inputProps={{
+                            ...inputProps,
+                            id: 'picker1',
+                        }}
+                        onItemSelected={onItemSelected}
+                        // selectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
+                        defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
+                    />
                 </Stack.Item>
                 <Stack.Item align="end" styles={stackItemStyles}>
                     {/* <IconButton iconProps={dragIcon} /> */}
@@ -204,4 +180,3 @@ function SectionItemComponent(props) {
 }
 
 export default SectionItemComponent;
-//https://stackoverflow.com/questions/65649408/how-to-indicate-loaging-searching-on-office-fabricui-tagpicker-for-large-data-se

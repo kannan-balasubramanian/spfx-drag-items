@@ -9,5 +9,6 @@ export interface ISectionItemComponentProps {
     sectionItemTitles: ISectionItemTitle[];
 
     onDeleteSectionItem(id: number, locationId: number): void;
+    onAddSectionItem(id: number, locationId: number): void;
     onTitleChange(id: number, locationId: number, newTitleText: string, newTitleKey: number);
 }

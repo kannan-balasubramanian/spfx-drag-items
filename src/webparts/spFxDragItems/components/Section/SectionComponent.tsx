@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Stack, IStackStyles, IStackTokens, IStackItemStyles, mergeStyles } from 'office-ui-fabric-react';
+import { ActionButton, Stack, IStackStyles, IStackTokens, IStackItemStyles, mergeStyles } from 'office-ui-fabric-react';
 import { Label } from 'office-ui-fabric-react/lib/Label';
 import { DefaultPalette } from 'office-ui-fabric-react';
 import { IconButton } from 'office-ui-fabric-react/lib/Button';
@@ -106,11 +106,19 @@ function SectionComponent(props) {
         // props.onDeleteSection(props.section.id, props.section.locationId);
     };
 
+    const onSectionItemAdd = (sectionItemId, sectionItemLocationId) => {
+        // console.log("SectionComponent=>onSectionItemDelete->");
+        // console.log(sectionItemId);
+        // console.log(sectionItemLocationId);
+        // props.onDeleteSectionItem(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
+        props.onAddSectionItem(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
+    };
+
     const onSectionItemDelete = (sectionItemId, sectionItemLocationId) => {
         // console.log("SectionComponent=>onSectionItemDelete->");
         // console.log(sectionItemId);
         // console.log(sectionItemLocationId);
-        props.onDeleteSection(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
+        props.onDeleteSectionItem(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
     };
 
     const updateParentStateCall = () => {
@@ -190,16 +198,19 @@ function SectionComponent(props) {
             </div>
             {isExpanded === true ?
                 <div>
-                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
-                        <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
-                            <Stack styles={itemStackStyles} tokens={itemStackTokens}>
-                                {sectionItems.map((sectionItem) =>
-                                    <div key={sectionItem.locationId}><SectionItemComponent onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} sectionItemTitles={props.sectionItemTitles} onTitleChange={updateParentStateOnSectionItemTitleChange} {...sectionItem} /></div>
-                                )}
-                            </Stack>
-                        </SortableContext>
-                    </DndContext>
-
+                    {sectionItems.length > 0 ?
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
+                            <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
+                                <Stack styles={itemStackStyles} tokens={itemStackTokens}>
+                                    {sectionItems.map((sectionItem) =>
+                                        <div key={sectionItem.locationId}><SectionItemComponent onAddSectionItem={onSectionItemAdd} onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} sectionItemTitles={props.sectionItemTitles} onTitleChange={updateParentStateOnSectionItemTitleChange} {...sectionItem} /></div>
+                                    )}
+                                </Stack>
+                            </SortableContext>
+                        </DndContext>
+                        :
+                        <ActionButton iconProps={addIcon} onClick={onSectionItemAdd.bind(props.section.id, 0)} >Add section item</ActionButton>
+                    }
                 </div>
                 : undefined
             }

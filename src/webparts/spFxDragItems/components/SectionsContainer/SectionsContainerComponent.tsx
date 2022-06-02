@@ -91,7 +91,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                             < Stack styles={stackStyles} tokens={stackTokens}>
                                 {
                                     this.state.sections.map((eachSection) => {
-                                        return (<div><SectionComponent onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSection={this.onAddNewSectionItemFromSection} onDeleteSection={this.onDeleteNewSectionItemFromSection} sectionItemTitles={this.state.sectionItemTitles} section={eachSection} key={eachSection.locationId} /></div>);
+                                        return (<div><SectionComponent onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSectionItem={this.onAddNewSectionItemFromSection} onDeleteSectionItem={this.onDeleteNewSectionItemFromSection} sectionItemTitles={this.state.sectionItemTitles} section={eachSection} key={eachSection.locationId} /></div>);
                                     })
 
                                 }
@@ -105,7 +105,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                         <Stack>
                             <Stack horizontal styles={deleteModalHeaderStackStyles} tokens={deleteModalHeaderStackTokens}>
                                 <Stack.Item align="baseline" tokens={deleteModalHeaderStackItemTokens}>
-                                    <FontIcon aria-label="Warning12" iconName="Warning12" className={deleteModalHeaderIconClass} />
+                                    <FontIcon aria-label="Delete" iconName="Delete" className={deleteModalHeaderIconClass} />
                                 </Stack.Item>
                                 <Stack.Item align="end" grow >
                                     <Label className={deleteModalHeaderLabelStyles}>Delete Item?</Label>
@@ -118,7 +118,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                             </Stack>
                             <Stack styles={deleteModalStackItemStyles} tokens={deleteModalItemStackTokens}>
                                 <Stack.Item>
-                                    <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={this.onConfirmDeleteNewSectionItemFromSection}></PrimaryButton>
+                                    <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={this.onConfirmDeleteNewSectionItemFromSection.bind(-1, -1)}></PrimaryButton>
                                 </Stack.Item>
                                 <Stack.Item>
                                     <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={this.onConfirmNotDeleteNewSectionItemFromSection}></DefaultButton>
@@ -132,32 +132,63 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         );
     }
 
-    private onAddNewSectionItemFromSection = (sectionId, sectionLocationId) => {
+    private onAddNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
+        // console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->");
+        // console.log(sectionId + "-" + sectionLocationId + "|" + sectionItemId + "-" + sectionItemLocationId);
         let newSectionItemId = this.randomNumberGenerator();
-        let newSectionItemTitle = { id: this.state.sectionItemTitles[(this.state.sections.length + 1)].id, title: this.state.sectionItemTitles[(this.state.sections.length + 1)].title };
-        let newSectionItemLocationId = (this.state.sections[sectionLocationId].sectionItems.length);
+        // let newSectionItemTitle = { id: this.state.sectionItemTitles[(this.state.sections.length + 1)].id, title: this.state.sectionItemTitles[(this.state.sections.length + 1)].title };
+        let newSectionItemTitle = undefined;
+        let newSectionItemLocationId = (sectionItemLocationId + 1);
         let newSectionItemSectionId = sectionId;
 
         let newSectionItem: ISectionItem = { id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionItemSectionId };
 
         let tempSectionsFromState = [...this.state.sections];
-        tempSectionsFromState[sectionLocationId].sectionItems.push(newSectionItem);
+        // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
+        let tempSectionItemsFromState = [...tempSectionsFromState[sectionLocationId].sectionItems];
+        tempSectionItemsFromState.splice(newSectionItemLocationId, 0, newSectionItem);
+        tempSectionItemsFromState.forEach((item, index, arr) => {
+            item.locationId = index;
+        });
+        tempSectionsFromState[sectionLocationId].sectionItems = tempSectionItemsFromState;
+        // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
+        // tempSectionsFromState[sectionLocationId].sectionItems.push(newSectionItem);
         this.setState({ sections: tempSectionsFromState });
     }
     private onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
-        let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + this.state.sections[sectionLocationId].title;
-        this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+        if (this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
+            // this.setState({ isDeleteSectionItemModalOpen: false, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+            this.onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
+        }
+        else {
+            let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + this.state.sections[sectionLocationId].title;
+            this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+        }
         // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
         // let tempSectionsFromState = [...this.state.sections];
         // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
         // this.setState({ sections: tempSectionsFromState });
     }
-    private onConfirmDeleteNewSectionItemFromSection = () => {
-        this.setState({ isDeleteSectionItemModalOpen: false });
-        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-        let tempSectionsFromState = [...this.state.sections];
-        tempSectionsFromState[this.state.sectionIndexToDelete].sectionItems.splice(this.state.sectionItemIndexToDelete, 1);
-        this.setState({ sections: tempSectionsFromState });
+    private onConfirmDeleteNewSectionItemFromSection = (sectionIndexToDelete?: number, sectionItemIndexToDelete?: number) => {
+        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection" + sectionIndexToDelete + "|" + sectionItemIndexToDelete);
+        if (sectionIndexToDelete != -1 && sectionItemIndexToDelete != -1) {
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionIndexToDelete + "|" + sectionItemIndexToDelete);
+            this.setState({ isDeleteSectionItemModalOpen: false });
+
+            let tempSectionsFromState = [...this.state.sections];
+            tempSectionsFromState[sectionIndexToDelete].sectionItems.splice(sectionItemIndexToDelete, 1);
+            this.setState({ sections: tempSectionsFromState });
+        }
+        else {
+            this.setState({ isDeleteSectionItemModalOpen: false });
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+            let tempSectionsFromState = [...this.state.sections];
+            if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
+                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionIndexToDelete + "|" + this.state.sectionItemIndexToDelete);
+                tempSectionsFromState[this.state.sectionIndexToDelete].sectionItems.splice(this.state.sectionItemIndexToDelete, 1);
+                this.setState({ sections: tempSectionsFromState });
+            }
+        }
     }
     private onConfirmNotDeleteNewSectionItemFromSection = () => {
         this.setState({ isDeleteSectionItemModalOpen: false });
@@ -174,7 +205,10 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         }
 
         let tempSectionsFromState = [...this.state.sections];
-        tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
+        // tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
+        let tempSectionsSectionItemsFromState = [...tempSectionsFromState[section.locationId].sectionItems];
+        tempSectionsSectionItemsFromState = newSectionItems;
+        tempSectionsFromState[section.locationId].sectionItems = tempSectionsSectionItemsFromState;
 
         this.setState({ sections: tempSectionsFromState });
 
@@ -187,21 +221,30 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         let sectionLocationId: number = 0;
 
         for (let indexA = 0; indexA < 100; indexA++) {
-            let newSectionItemTitleId: number = this.randomNumberGenerator();
-            let newSectionItemTitleTitle: string = ("Item " + (indexA + 1));
+            let newSectionItemTitleId: number = 0;
+            let newSectionItemTitleTitle: string = "";
+            if (indexA > 0) {
+                newSectionItemTitleId = this.randomNumberGenerator();
+                newSectionItemTitleTitle = ("Item " + (indexA));
+            }
             newSectionItemTitles.push({ id: newSectionItemTitleId, title: newSectionItemTitleTitle });
         }
 
         this.setState({ sectionItemTitles: newSectionItemTitles });
 
-        for (let indexX = 0; indexX < 4; indexX++) {
+        for (let indexX = 0; indexX < 1; indexX++) {
             let sectionItemLocationId: number = 0;
             let newSectionItems: ISectionItem[] = [];
             let newSectionId: number = this.randomNumberGenerator();
             let newSectionTitle: string = ("Section " + (indexX + 1));
 
-            for (let indexY = 0; indexY < 5; indexY++) {
-                newSectionItems.push({ id: this.randomNumberGenerator(), title: { id: newSectionItemTitles[indexY].id, title: newSectionItemTitles[indexY].title }, locationId: sectionItemLocationId, sectionId: newSectionId });
+            for (let indexY = 0; indexY < 1; indexY++) {
+                if (indexX === 0) {
+                    newSectionItems.push({ id: this.randomNumberGenerator(), title: undefined, locationId: sectionItemLocationId, sectionId: newSectionId });
+                }
+                else {
+                    newSectionItems.push({ id: this.randomNumberGenerator(), title: { id: newSectionItemTitles[indexY].id, title: newSectionItemTitles[indexY].title }, locationId: sectionItemLocationId, sectionId: newSectionId });
+                }
                 sectionItemLocationId++;
             }
             newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });
