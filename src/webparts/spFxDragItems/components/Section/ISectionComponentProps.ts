@@ -15,4 +15,5 @@ export interface ISectionComponentProps {
     onAddSection(id: number, locationId: number): void;
     onAddSectionItem(id: number, locationId: number, sectionItemId: number, sectionItemLocationId: number): void;
     onDeleteSectionItem(id: number, locationId: number, sectionItemId: number, sectionItemLocationId: number): void;
+    onSectionTitleChange(id: number, locationId: number, title: string): void;
 }

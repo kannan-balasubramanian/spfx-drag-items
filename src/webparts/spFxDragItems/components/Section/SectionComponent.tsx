@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import { ActionButton, Stack, IStackStyles, IStackTokens, IStackItemStyles, mergeStyles } from 'office-ui-fabric-react';
-import { Label } from 'office-ui-fabric-react/lib/Label';
-import { DefaultPalette } from 'office-ui-fabric-react';
-import { IconButton } from 'office-ui-fabric-react/lib/Button';
-import { IIconProps } from 'office-ui-fabric-react/';
+import { ActionButton, Stack, IStackStyles, IStackTokens, IStackItemStyles, mergeStyles, TextField, Label, IconButton, IIconProps, DefaultPalette } from 'office-ui-fabric-react';
 
 // import { ISectionComponentProps } from './ISectionComponentProps';
 // import { ISectionComponentState } from './ISectionComponentState';
@@ -161,6 +157,10 @@ function SectionComponent(props) {
         props.onUpdateParentState(updatedSection);
     };
 
+    const onTextChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+        props.onSectionTitleChange(props.section.id, props.section.locationId, newValue);
+    };
+
 
     React.useEffect(() => {
         // isDragged is used to prevent infinite loop since useEffect is called for every render even when the state is updated.
@@ -189,10 +189,15 @@ function SectionComponent(props) {
                             <Stack.Item align="auto" styles={headerStackItemStyles}><IconButton iconProps={downIcon} onClick={onExpandButtonClick} /></Stack.Item>
                             : undefined
                     }
-                    <Stack.Item align="baseline" grow styles={headerStackItemStyles}><Label className={headerLabelStyles} >{props.section.locationId} ({props.section.id}) {props.section.title}</Label></Stack.Item>
+                    <Stack.Item align="auto" styles={headerStackItemStyles}>
+                        <Label className={headerLabelStyles} >{props.section.locationId} ({props.section.id}) {props.section.title}</Label>
+                    </Stack.Item>
+                    <Stack.Item align="auto" grow styles={headerStackItemStyles}>
+                        <TextField required value={props.section.title} onChange={onTextChange} />
+                    </Stack.Item>
                     <Stack.Item align="end" styles={headerStackItemStyles}>
                         <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
-                        <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} />
+                        {/* <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} /> */}
                     </Stack.Item>
                 </Stack>
             </div>
