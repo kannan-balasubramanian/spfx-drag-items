@@ -71,7 +71,16 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
     constructor(state: ISectionsContainerComponentState) {
         super(state);
-        this.state = { sectionItemTitles: [], sections: [], isGenerateSectionsButtonDisabled: false, deleteSectionItemModalWarningText: "", isDeleteSectionItemModalOpen: false, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 };
+        this.state = {
+            sectionItemTitles: [],
+            sections: [],
+            isGenerateSectionsButtonDisabled: false,
+            deleteSectionItemModalWarningText: "",
+            isDeleteSectionItemModalOpen: false,
+            isDeleteSectionModalOpen: false,
+            sectionIndexToDelete: -1,
+            sectionItemIndexToDelete: -1
+        };
     }
 
     //#region [Yellow] Render - Start
@@ -92,7 +101,16 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                             < Stack styles={stackStyles} tokens={stackTokens}>
                                 {
                                     this.state.sections.map((eachSection) => {
-                                        return (<div><SectionComponent onAddSection={this.onAddNewSectionFromSection} onUpdateParentState={this.onUpdateParentStateCallFromSection} onAddSectionItem={this.onAddNewSectionItemFromSection} onDeleteSectionItem={this.onDeleteNewSectionItemFromSection} onSectionTitleChange={this.onSectionTitleChange} sectionItemTitles={this.state.sectionItemTitles} section={eachSection} key={eachSection.locationId} /></div>);
+                                        return (<div><SectionComponent
+                                            onAddSection={this.onAddNewSectionFromSection}
+                                            onDeleteSection={this.onDeleteSectionFromSection}
+                                            onUpdateParentState={this.onUpdateParentStateCallFromSection}
+                                            onAddSectionItem={this.onAddNewSectionItemFromSection}
+                                            onDeleteSectionItem={this.onDeleteNewSectionItemFromSection}
+                                            onSectionTitleChange={this.onSectionTitleChange}
+                                            sectionItemTitles={this.state.sectionItemTitles}
+                                            section={eachSection}
+                                            key={eachSection.locationId} /></div>);
                                     })
 
                                 }
@@ -109,7 +127,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                                     <FontIcon aria-label="Delete" iconName="Delete" className={deleteModalHeaderIconClass} />
                                 </Stack.Item>
                                 <Stack.Item align="end" grow >
-                                    <Label className={deleteModalHeaderLabelStyles}>Delete Item?</Label>
+                                    <Label className={deleteModalHeaderLabelStyles}>Delete Section Item?</Label>
                                 </Stack.Item>
                             </Stack>
                             <Stack>
@@ -123,6 +141,31 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
                                 </Stack.Item>
                                 <Stack.Item>
                                     <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={this.onConfirmNotDeleteNewSectionItemFromSection}></DefaultButton>
+                                </Stack.Item>
+                            </Stack>
+                        </Stack>
+                    </Modal>
+                    <Modal isOpen={this.state.isDeleteSectionModalOpen}>
+                        <Stack>
+                            <Stack horizontal styles={deleteModalHeaderStackStyles} tokens={deleteModalHeaderStackTokens}>
+                                <Stack.Item align="baseline" tokens={deleteModalHeaderStackItemTokens}>
+                                    <FontIcon aria-label="Delete" iconName="Delete" className={deleteModalHeaderIconClass} />
+                                </Stack.Item>
+                                <Stack.Item align="end" grow >
+                                    <Label className={deleteModalHeaderLabelStyles}>Delete Section?</Label>
+                                </Stack.Item>
+                            </Stack>
+                            <Stack>
+                                <Stack.Item align='auto' tokens={deleteModalHeaderStackItemTokens}>
+                                    Are you sure you want to delete '{this.state.deleteSectionItemModalWarningText}' ?
+                                </Stack.Item>
+                            </Stack>
+                            <Stack styles={deleteModalStackItemStyles} tokens={deleteModalItemStackTokens}>
+                                <Stack.Item>
+                                    <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={this.onConfirmDeleteSectionFromSection.bind(-1)}></PrimaryButton>
+                                </Stack.Item>
+                                <Stack.Item>
+                                    <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={this.onConfirmNotDeleteNewSectionFromSection}></DefaultButton>
                                 </Stack.Item>
                             </Stack>
                         </Stack>
@@ -161,12 +204,12 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
     private onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
         if (this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
-            // this.setState({ isDeleteSectionItemModalOpen: false, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+            // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
             this.onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
         }
         else {
             let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + this.state.sections[sectionLocationId].title;
-            this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+            this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionModalOpen: false, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
         }
         // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
         // let tempSectionsFromState = [...this.state.sections];
@@ -175,23 +218,23 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     }
 
     private onConfirmDeleteNewSectionItemFromSection = (sectionIndexToDelete?: number, sectionItemIndexToDelete?: number) => {
-        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection" + sectionIndexToDelete + "|" + sectionItemIndexToDelete);
+        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
         if (sectionIndexToDelete != -1 && sectionItemIndexToDelete != -1) {
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionIndexToDelete + "|" + sectionItemIndexToDelete);
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
             this.setState({ isDeleteSectionItemModalOpen: false });
 
             let tempSectionsFromState = [...this.state.sections];
             tempSectionsFromState[sectionIndexToDelete].sectionItems.splice(sectionItemIndexToDelete, 1);
-            this.setState({ sections: tempSectionsFromState });
+            this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 });
         }
         else {
             this.setState({ isDeleteSectionItemModalOpen: false });
             // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
             let tempSectionsFromState = [...this.state.sections];
             if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
-                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionIndexToDelete + "|" + this.state.sectionItemIndexToDelete);
+                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionItemIndexToDelete + "|" + this.state.sectionItemIndexToDelete);
                 tempSectionsFromState[this.state.sectionIndexToDelete].sectionItems.splice(this.state.sectionItemIndexToDelete, 1);
-                this.setState({ sections: tempSectionsFromState });
+                this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 });
             }
         }
     }
@@ -278,6 +321,53 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
         // console.log(tempSectionsFromState);
 
         this.setState({ sections: tempSectionsFromState });
+    }
+
+    private onDeleteSectionFromSection = (sectionId, sectionLocationId) => {
+        if (this.state.sections[sectionLocationId].title == undefined) {
+            // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+            console.log("SectionsContainerComponent=>onDeleteSectionFromSection->onConfirmDeleteSectionFromSection");
+            this.onConfirmDeleteSectionFromSection(sectionLocationId);
+        }
+        else {
+            let sectionToBeDeletedTitle: string = this.state.sections[sectionLocationId].title;
+            console.log("SectionsContainerComponent=>onDeleteSectionFromSection->onConfirmDeleteSectionFromSection->State");
+            this.setState({ deleteSectionItemModalWarningText: sectionToBeDeletedTitle, isDeleteSectionModalOpen: true, isDeleteSectionItemModalOpen: false, sectionIndexToDelete: sectionLocationId });
+        }
+        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+        // let tempSectionsFromState = [...this.state.sections];
+        // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
+        // this.setState({ sections: tempSectionsFromState });
+    }
+
+    private onConfirmDeleteSectionFromSection = (sectionIndexToDelete?: number) => {
+        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->" + sectionIndexToDelete);
+        if (sectionIndexToDelete != -1) {
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionIndexToDelete);
+            this.setState({ isDeleteSectionModalOpen: false });
+
+            let tempSectionsFromState = [...this.state.sections];
+            tempSectionsFromState.splice(sectionIndexToDelete, 1);
+            this.setState({ sections: tempSectionsFromState });
+        }
+        else {
+            this.setState({ isDeleteSectionModalOpen: false });
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+            let tempSectionsFromState = [...this.state.sections];
+            if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
+                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionIndexToDelete);
+                tempSectionsFromState.splice(this.state.sectionIndexToDelete, 1);
+                this.setState({ sections: tempSectionsFromState });
+            }
+        }
+        console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Sections Length->" + this.state.sections.length);
+        if (this.state.sections.length <= 1) {
+            this.setState({ isGenerateSectionsButtonDisabled: false });
+        }
+    }
+
+    private onConfirmNotDeleteNewSectionFromSection = () => {
+        this.setState({ isDeleteSectionModalOpen: false });
     }
 
     private onSectionTitleChange = (sectionId: number, sectionLocationId: number, sectionTitle: string) => {

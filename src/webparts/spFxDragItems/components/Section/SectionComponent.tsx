@@ -99,7 +99,7 @@ function SectionComponent(props) {
         props.onAddSection(props.section.id, props.section.locationId);
     };
     const onDeleteButtonClick = () => {
-        // props.onDeleteSection(props.section.id, props.section.locationId);
+        props.onDeleteSection(props.section.id, props.section.locationId);
     };
 
     const onSectionItemAdd = (sectionItemId, sectionItemLocationId) => {
@@ -129,12 +129,6 @@ function SectionComponent(props) {
     };
 
     const updateParentStateOnSectionItemTitleChange = (id: number, locationId: number, newTitle: string, newTitleKey: number) => {
-        // console.log("SectionComponent=>updateParentStateOnSectionItemTitleChange->");
-        // console.log(id);
-        // console.log(locationId);
-        // console.log(newTitle);
-        // console.log(newTitleKey);
-        // console.log(sectionItems);
 
         // let updatedSectionItem: ISectionItem = sectionItems[props.section.locationId];
         // // console.log(updatedSectionItem.title);
@@ -197,7 +191,7 @@ function SectionComponent(props) {
                     </Stack.Item>
                     <Stack.Item align="end" styles={headerStackItemStyles}>
                         <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
-                        {/* <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} /> */}
+                        <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} />
                     </Stack.Item>
                 </Stack>
             </div>

@@ -7,5 +7,6 @@ export interface ISectionsContainerComponentState {
     isGenerateSectionsButtonDisabled: boolean;
     deleteSectionItemModalWarningText: string;
     isDeleteSectionItemModalOpen: boolean;
+    isDeleteSectionModalOpen: boolean;
     sectionItemTitles: ISectionItemTitle[];
 }
