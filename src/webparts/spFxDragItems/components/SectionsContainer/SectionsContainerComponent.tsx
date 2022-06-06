@@ -326,12 +326,12 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     private onDeleteSectionFromSection = (sectionId, sectionLocationId) => {
         if (this.state.sections[sectionLocationId].title == undefined) {
             // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
-            console.log("SectionsContainerComponent=>onDeleteSectionFromSection->onConfirmDeleteSectionFromSection");
+            // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>onConfirmDeleteSectionFromSection->" + sectionLocationId);
             this.onConfirmDeleteSectionFromSection(sectionLocationId);
         }
         else {
             let sectionToBeDeletedTitle: string = this.state.sections[sectionLocationId].title;
-            console.log("SectionsContainerComponent=>onDeleteSectionFromSection->onConfirmDeleteSectionFromSection->State");
+            // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>->State->" + sectionLocationId);
             this.setState({ deleteSectionItemModalWarningText: sectionToBeDeletedTitle, isDeleteSectionModalOpen: true, isDeleteSectionItemModalOpen: false, sectionIndexToDelete: sectionLocationId });
         }
         // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
@@ -341,26 +341,28 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     }
 
     private onConfirmDeleteSectionFromSection = (sectionIndexToDelete?: number) => {
-        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->" + sectionIndexToDelete);
-        if (sectionIndexToDelete != -1) {
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionIndexToDelete);
+        // console.log("SectionsContainerComponent=>onConfirmDeleteSectionFromSection->");
+        // console.log(sectionIndexToDelete);
+        // console.log(this.state.sectionIndexToDelete);
+        if (this.state.sectionIndexToDelete == -1) {
+            // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From onDeleteSectionFromSection->" + sectionIndexToDelete);
             this.setState({ isDeleteSectionModalOpen: false });
 
             let tempSectionsFromState = [...this.state.sections];
             tempSectionsFromState.splice(sectionIndexToDelete, 1);
-            this.setState({ sections: tempSectionsFromState });
+            this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1 });
         }
         else {
             this.setState({ isDeleteSectionModalOpen: false });
             // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
             let tempSectionsFromState = [...this.state.sections];
             if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
-                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionIndexToDelete);
+                // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From State->" + this.state.sectionIndexToDelete);
                 tempSectionsFromState.splice(this.state.sectionIndexToDelete, 1);
-                this.setState({ sections: tempSectionsFromState });
+                this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1 });
             }
         }
-        console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Sections Length->" + this.state.sections.length);
+        // console.log("SectionsContainerComponent==>onDeleteNewSectionItemFromSection->Sections Length->" + this.state.sections.length);
         if (this.state.sections.length <= 1) {
             this.setState({ isGenerateSectionsButtonDisabled: false });
         }
