@@ -179,63 +179,75 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
     //#region [Green] Section Items - Start
     private onAddNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
-        // console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->");
-        // console.log(sectionId + "-" + sectionLocationId + "|" + sectionItemId + "-" + sectionItemLocationId);
-        let newSectionItemId = this.randomNumberGenerator();
-        // let newSectionItemTitle = { id: this.state.sectionItemTitles[(this.state.sections.length + 1)].id, title: this.state.sectionItemTitles[(this.state.sections.length + 1)].title };
-        let newSectionItemTitle = undefined;
-        let newSectionItemLocationId = (sectionItemLocationId + 1);
-        let newSectionItemSectionId = sectionId;
+        try {
+            // console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->");
+            // console.log(sectionId + "-" + sectionLocationId + "|" + sectionItemId + "-" + sectionItemLocationId);
+            let newSectionItemId = this.randomNumberGenerator();
+            // let newSectionItemTitle = { id: this.state.sectionItemTitles[(this.state.sections.length + 1)].id, title: this.state.sectionItemTitles[(this.state.sections.length + 1)].title };
+            let newSectionItemTitle = undefined;
+            let newSectionItemLocationId = (sectionItemLocationId + 1);
+            let newSectionItemSectionId = sectionId;
 
-        let newSectionItem: ISectionItem = { id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionItemSectionId };
+            let newSectionItem: ISectionItem = { id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionItemSectionId };
 
-        let tempSectionsFromState = [...this.state.sections];
-        // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
-        let tempSectionItemsFromState = [...tempSectionsFromState[sectionLocationId].sectionItems];
-        tempSectionItemsFromState.splice(newSectionItemLocationId, 0, newSectionItem);
-        tempSectionItemsFromState.forEach((item, index, arr) => {
-            item.locationId = index;
-        });
-        tempSectionsFromState[sectionLocationId].sectionItems = tempSectionItemsFromState;
-        // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
-        // tempSectionsFromState[sectionLocationId].sectionItems.push(newSectionItem);
-        this.setState({ sections: tempSectionsFromState });
+            let tempSectionsFromState = [...this.state.sections];
+            // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
+            let tempSectionItemsFromState = [...tempSectionsFromState[sectionLocationId].sectionItems];
+            tempSectionItemsFromState.splice(newSectionItemLocationId, 0, newSectionItem);
+            tempSectionItemsFromState.forEach((item, index, arr) => {
+                item.locationId = index;
+            });
+            tempSectionsFromState[sectionLocationId].sectionItems = tempSectionItemsFromState;
+            // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
+            // tempSectionsFromState[sectionLocationId].sectionItems.push(newSectionItem);
+            this.setState({ sections: tempSectionsFromState });
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onAddNewSectionItemFromSection'", Error);
+        }
     }
 
     private onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
-        if (this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
-            // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
-            this.onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
+        try {
+            if (this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
+                // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+                this.onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
+            }
+            else {
+                let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + this.state.sections[sectionLocationId].title;
+                this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionModalOpen: false, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+            }
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+            // let tempSectionsFromState = [...this.state.sections];
+            // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
+            // this.setState({ sections: tempSectionsFromState });
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onDeleteNewSectionItemFromSection'", Error);
         }
-        else {
-            let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + this.state.sections[sectionLocationId].title;
-            this.setState({ deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle, isDeleteSectionModalOpen: false, isDeleteSectionItemModalOpen: true, sectionIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
-        }
-        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-        // let tempSectionsFromState = [...this.state.sections];
-        // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
-        // this.setState({ sections: tempSectionsFromState });
     }
 
     private onConfirmDeleteNewSectionItemFromSection = (sectionIndexToDelete?: number, sectionItemIndexToDelete?: number) => {
-        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
-        if (sectionIndexToDelete != -1 && sectionItemIndexToDelete != -1) {
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
-            this.setState({ isDeleteSectionItemModalOpen: false });
+        try {
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
+            if (sectionIndexToDelete != -1 && sectionItemIndexToDelete != -1) {
+                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
+                this.setState({ isDeleteSectionItemModalOpen: false });
 
-            let tempSectionsFromState = [...this.state.sections];
-            tempSectionsFromState[sectionIndexToDelete].sectionItems.splice(sectionItemIndexToDelete, 1);
-            this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 });
-        }
-        else {
-            this.setState({ isDeleteSectionItemModalOpen: false });
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-            let tempSectionsFromState = [...this.state.sections];
-            if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
-                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionItemIndexToDelete + "|" + this.state.sectionItemIndexToDelete);
-                tempSectionsFromState[this.state.sectionIndexToDelete].sectionItems.splice(this.state.sectionItemIndexToDelete, 1);
+                let tempSectionsFromState = [...this.state.sections];
+                tempSectionsFromState[sectionIndexToDelete].sectionItems.splice(sectionItemIndexToDelete, 1);
                 this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 });
             }
+            else {
+                this.setState({ isDeleteSectionItemModalOpen: false });
+                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+                let tempSectionsFromState = [...this.state.sections];
+                if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
+                    // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionItemIndexToDelete + "|" + this.state.sectionItemIndexToDelete);
+                    tempSectionsFromState[this.state.sectionIndexToDelete].sectionItems.splice(this.state.sectionItemIndexToDelete, 1);
+                    this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1, sectionItemIndexToDelete: -1 });
+                }
+            }
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onConfirmDeleteNewSectionItemFromSection'", Error);
         }
     }
 
@@ -244,153 +256,188 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
     }
 
     private onUpdateParentStateCallFromSection = (section: ISection) => {
-        let newSectionItems: ISectionItem[] = [];
-        for (let i = 0; i < section.sectionItems.length; i++) {
-            newSectionItems.push({ id: section.sectionItems[i].id, title: section.sectionItems[i].title, locationId: i, sectionId: section.sectionItems[i].sectionId });
+        try {
+            let newSectionItems: ISectionItem[] = [];
+            for (let i = 0; i < section.sectionItems.length; i++) {
+                newSectionItems.push({ id: section.sectionItems[i].id, title: section.sectionItems[i].title, locationId: i, sectionId: section.sectionItems[i].sectionId });
+            }
+
+            let tempSectionsFromState = [...this.state.sections];
+            // tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
+            let tempSectionsSectionItemsFromState = [...tempSectionsFromState[section.locationId].sectionItems];
+            tempSectionsSectionItemsFromState = newSectionItems;
+            tempSectionsFromState[section.locationId].sectionItems = tempSectionsSectionItemsFromState;
+
+            this.setState({ sections: tempSectionsFromState });
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onUpdateParentStateCallFromSection'", Error);
         }
-
-        let tempSectionsFromState = [...this.state.sections];
-        // tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
-        let tempSectionsSectionItemsFromState = [...tempSectionsFromState[section.locationId].sectionItems];
-        tempSectionsSectionItemsFromState = newSectionItems;
-        tempSectionsFromState[section.locationId].sectionItems = tempSectionsSectionItemsFromState;
-
-        this.setState({ sections: tempSectionsFromState });
-
     }
     //#endregion Section Items - End
 
     //#region [Orange] Section - Start
     private onGenerateSectionsButtonClicked(event?: React.MouseEvent<HTMLButtonElement>) {
-        this.setState({ isGenerateSectionsButtonDisabled: true });
-        let newSections: ISection[] = [];
-        let newSectionItemTitles: ISectionItemTitle[] = [];
-        let sectionLocationId: number = 0;
+        try {
+            this.setState({ isGenerateSectionsButtonDisabled: true });
+            let newSections: ISection[] = [];
+            let newSectionItemTitles: ISectionItemTitle[] = [];
+            let sectionLocationId: number = 0;
 
-        for (let indexA = 0; indexA < 100; indexA++) {
-            let newSectionItemTitleId: number = 0;
-            let newSectionItemTitleTitle: string = "";
-            if (indexA > 0) {
-                newSectionItemTitleId = this.randomNumberGenerator();
-                newSectionItemTitleTitle = ("Item " + (indexA));
-            }
-            newSectionItemTitles.push({ id: newSectionItemTitleId, title: newSectionItemTitleTitle });
-        }
-
-        this.setState({ sectionItemTitles: newSectionItemTitles });
-
-        for (let indexX = 0; indexX < 1; indexX++) {
-            let sectionItemLocationId: number = 0;
-            let newSectionItems: ISectionItem[] = [];
-            let newSectionId: number = this.randomNumberGenerator();
-            let newSectionTitle: string = undefined;
-
-            for (let indexY = 0; indexY < 1; indexY++) {
-                if (indexX === 0) {
-                    newSectionItems.push({ id: this.randomNumberGenerator(), title: undefined, locationId: sectionItemLocationId, sectionId: newSectionId });
+            for (let indexA = 0; indexA < 100; indexA++) {
+                let newSectionItemTitleId: number = 0;
+                let newSectionItemTitleTitle: string = "";
+                if (indexA > 0) {
+                    newSectionItemTitleId = this.randomNumberGenerator();
+                    newSectionItemTitleTitle = ("Item " + (indexA));
                 }
-                else {
-                    newSectionItems.push({ id: this.randomNumberGenerator(), title: { id: newSectionItemTitles[indexY].id, title: newSectionItemTitles[indexY].title }, locationId: sectionItemLocationId, sectionId: newSectionId });
-                }
-                sectionItemLocationId++;
+                newSectionItemTitles.push({ id: newSectionItemTitleId, title: newSectionItemTitleTitle });
             }
-            newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });
-            sectionLocationId++;
 
-            this.setState({ sections: newSections });
+            this.setState({ sectionItemTitles: newSectionItemTitles });
+
+            for (let indexX = 0; indexX < 1; indexX++) {
+                let sectionItemLocationId: number = 0;
+                let newSectionItems: ISectionItem[] = [];
+                let newSectionId: number = this.randomNumberGenerator();
+                let newSectionTitle: string = undefined;
+
+                for (let indexY = 0; indexY < 1; indexY++) {
+                    if (indexX === 0) {
+                        newSectionItems.push({ id: this.randomNumberGenerator(), title: undefined, locationId: sectionItemLocationId, sectionId: newSectionId });
+                    }
+                    else {
+                        newSectionItems.push({ id: this.randomNumberGenerator(), title: { id: newSectionItemTitles[indexY].id, title: newSectionItemTitles[indexY].title }, locationId: sectionItemLocationId, sectionId: newSectionId });
+                    }
+                    sectionItemLocationId++;
+                }
+                newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });
+                sectionLocationId++;
+
+                this.setState({ sections: newSections });
+            }
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onGenerateSectionsButtonClicked'", Error);
         }
     }
 
     private onAddNewSectionFromSection = (sectionId, sectionLocationId) => {
-        let newSectionId = this.randomNumberGenerator();
-        let newSectionTitle = undefined;
+        try {
+            let newSectionId = this.randomNumberGenerator();
+            let newSectionTitle = undefined;
 
-        let newSectionItemId = this.randomNumberGenerator();
-        let newSectionItemTitle = undefined;
-        let newSectionItemLocationId = 0;
+            let newSectionItemId = this.randomNumberGenerator();
+            let newSectionItemTitle = undefined;
+            let newSectionItemLocationId = 0;
 
-        let newSectionItem: ISectionItem[] = [{ id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionId }];
-        let newSection: ISection = { id: newSectionId, title: newSectionTitle, locationId: -1, isExpanded: true, sectionItems: newSectionItem };
+            let newSectionItem: ISectionItem[] = [{ id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionId }];
+            let newSection: ISection = { id: newSectionId, title: newSectionTitle, locationId: -1, isExpanded: true, sectionItems: newSectionItem };
 
-        let tempSectionsFromState = [...this.state.sections];
-        // console.log(tempSectionsFromState);
-        tempSectionsFromState.splice((sectionLocationId + 1), 0, newSection);
-        tempSectionsFromState.forEach((item, index, arr) => {
-            item.locationId = index;
-        });
-        // console.log(tempSectionsFromState);
+            let tempSectionsFromState = [...this.state.sections];
+            // console.log(tempSectionsFromState);
+            tempSectionsFromState.splice((sectionLocationId + 1), 0, newSection);
+            tempSectionsFromState.forEach((item, index, arr) => {
+                item.locationId = index;
+            });
+            // console.log(tempSectionsFromState);
 
-        this.setState({ sections: tempSectionsFromState });
+            this.setState({ sections: tempSectionsFromState });
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onAddNewSectionFromSection'", Error);
+        }
     }
 
     private onDeleteSectionFromSection = (sectionId, sectionLocationId) => {
-        if (this.state.sections[sectionLocationId].title == undefined) {
-            // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
-            // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>onConfirmDeleteSectionFromSection->" + sectionLocationId);
-            this.onConfirmDeleteSectionFromSection(sectionLocationId);
+        try {
+            if (this.state.sections[sectionLocationId].title == undefined) {
+                // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
+                // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>onConfirmDeleteSectionFromSection->" + sectionLocationId);
+                this.onConfirmDeleteSectionFromSection(sectionLocationId);
+            }
+            else {
+                let sectionToBeDeletedTitle: string = this.state.sections[sectionLocationId].title;
+                // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>->State->" + sectionLocationId);
+                this.setState({ deleteSectionItemModalWarningText: sectionToBeDeletedTitle, isDeleteSectionModalOpen: true, isDeleteSectionItemModalOpen: false, sectionIndexToDelete: sectionLocationId });
+            }
+            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+            // let tempSectionsFromState = [...this.state.sections];
+            // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
+            // this.setState({ sections: tempSectionsFromState });
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onDeleteSectionFromSection'", Error);
         }
-        else {
-            let sectionToBeDeletedTitle: string = this.state.sections[sectionLocationId].title;
-            // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>->State->" + sectionLocationId);
-            this.setState({ deleteSectionItemModalWarningText: sectionToBeDeletedTitle, isDeleteSectionModalOpen: true, isDeleteSectionItemModalOpen: false, sectionIndexToDelete: sectionLocationId });
-        }
-        // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-        // let tempSectionsFromState = [...this.state.sections];
-        // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
-        // this.setState({ sections: tempSectionsFromState });
     }
 
     private onConfirmDeleteSectionFromSection = (sectionIndexToDelete?: number) => {
-        // console.log("SectionsContainerComponent=>onConfirmDeleteSectionFromSection->");
-        // console.log(sectionIndexToDelete);
-        // console.log(this.state.sectionIndexToDelete);
-        if (this.state.sectionIndexToDelete == -1) {
-            // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From onDeleteSectionFromSection->" + sectionIndexToDelete);
-            this.setState({ isDeleteSectionModalOpen: false });
+        try {
+            // console.log("SectionsContainerComponent=>onConfirmDeleteSectionFromSection->");
+            // console.log(sectionIndexToDelete);
+            // console.log(this.state.sectionIndexToDelete);
+            if (this.state.sectionIndexToDelete == -1) {
+                // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From onDeleteSectionFromSection->" + sectionIndexToDelete);
+                this.setState({ isDeleteSectionModalOpen: false });
 
-            let tempSectionsFromState = [...this.state.sections];
-            tempSectionsFromState.splice(sectionIndexToDelete, 1);
-            this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1 });
-        }
-        else {
-            this.setState({ isDeleteSectionModalOpen: false });
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-            let tempSectionsFromState = [...this.state.sections];
-            if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
-                // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From State->" + this.state.sectionIndexToDelete);
-                tempSectionsFromState.splice(this.state.sectionIndexToDelete, 1);
+                let tempSectionsFromState = [...this.state.sections];
+                tempSectionsFromState.splice(sectionIndexToDelete, 1);
                 this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1 });
             }
-        }
-        // console.log("SectionsContainerComponent==>onDeleteNewSectionItemFromSection->Sections Length->" + this.state.sections.length);
-        if (this.state.sections.length <= 1) {
-            this.setState({ isGenerateSectionsButtonDisabled: false });
+            else {
+                this.setState({ isDeleteSectionModalOpen: false });
+                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+                let tempSectionsFromState = [...this.state.sections];
+                if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
+                    // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From State->" + this.state.sectionIndexToDelete);
+                    tempSectionsFromState.splice(this.state.sectionIndexToDelete, 1);
+                    this.setState({ sections: tempSectionsFromState, sectionIndexToDelete: -1 });
+                }
+            }
+            // console.log("SectionsContainerComponent==>onDeleteNewSectionItemFromSection->Sections Length->" + this.state.sections.length);
+            if (this.state.sections.length <= 1) {
+                this.setState({ isGenerateSectionsButtonDisabled: false });
+            }
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onConfirmDeleteSectionFromSection'", Error);
         }
     }
 
     private onConfirmNotDeleteNewSectionFromSection = () => {
-        this.setState({ isDeleteSectionModalOpen: false });
+        try {
+            this.setState({ isDeleteSectionModalOpen: false });
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onConfirmNotDeleteNewSectionFromSection'", Error);
+        }
     }
 
     private onSectionTitleChange = (sectionId: number, sectionLocationId: number, sectionTitle: string) => {
-        // console.log(sectionId + "|" + sectionLocationId + "|" + sectionTitle);
-        let tempSectionsFromState = [...this.state.sections];
-        tempSectionsFromState[sectionLocationId].title = sectionTitle;
-        this.setState({ sections: tempSectionsFromState });
+        try {
+            // console.log(sectionId + "|" + sectionLocationId + "|" + sectionTitle);
+            let tempSectionsFromState = [...this.state.sections];
+            tempSectionsFromState[sectionLocationId].title = sectionTitle;
+            this.setState({ sections: tempSectionsFromState });
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onSectionTitleChange'", Error);
+        }
     }
 
     private viewState() {
-        console.log("SectionsContainerComponent=>viewState->");
-        if (this.state.sections.length > 0) {
-            console.log(this.state.sections);
+        try {
+            console.log("SectionsContainerComponent=>viewState->");
+            if (this.state.sections.length > 0) {
+                console.log(this.state.sections);
+            }
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>viewState'", Error);
         }
     }
 
     private randomNumberGenerator(): number {
-        let min = 1;
-        let max = 999;
-        let rand = min + (Math.random() * (max - min));
-        return Math.round(rand);
+        try {
+            let min = 1;
+            let max = 999;
+            let rand = min + (Math.random() * (max - min));
+            return Math.round(rand);
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>randomNumberGenerator'", Error);
+        }
     }
     //#endregion Section - End
 }

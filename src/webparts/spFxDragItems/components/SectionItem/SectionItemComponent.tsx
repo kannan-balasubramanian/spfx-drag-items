@@ -15,7 +15,7 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 function SectionItemComponent(props) {
 
-    // console.log("SectionItemComponent->" + props.id);
+    console.debug("SectionItemComponent->", props.id, props.title);
     // console.log(props.title);
 
     // console.log(props.sectionItemTitles);
@@ -63,13 +63,21 @@ function SectionItemComponent(props) {
     };
 
     const onAddButtonClick = () => {
-        // console.log("SectionItemComponent=>onAddButtonClick->" + props.id + "|" + props.locationId);
-        props.onAddSectionItem(props.id, props.locationId);
+        try {
+            // console.log("SectionItemComponent=>onAddButtonClick->" + props.id + "|" + props.locationId);
+            props.onAddSectionItem(props.id, props.locationId);
+        } catch (Error) {
+            console.error("Error at 'SectionComponent=>SectionItemComponent'", Error);
+        }
     };
 
     const onItemDeleteButtonClick = () => {
-        // console.log("SectionItemComponent=>onDeleteButtonClick->");
-        props.onDeleteSectionItem(props.id, props.locationId);
+        try {
+            // console.log("SectionItemComponent=>onDeleteButtonClick->");
+            props.onDeleteSectionItem(props.id, props.locationId);
+        } catch (Error) {
+            console.error("Error at 'SectionComponent=>onItemDeleteButtonClick'", Error);
+        }
     };
 
     const pickerSuggestionsProps: IBasePickerSuggestionsProps = {
@@ -78,32 +86,44 @@ function SectionItemComponent(props) {
     };
     const pickerTags: ITag[] = props.sectionItemTitles.map(item => ({ key: item.id, name: item.title }));
     const inputProps: IInputProps = {
-        onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
-        onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
+        // onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
+        // onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
     };
     const [tagPicker, { toggle: toggleIsTagPickerVisible }] = useBoolean(false);
     const listContainsTagList = (tag: ITag, tagList?: ITag[]) => {
-        if (!tagList || !tagList.length || tagList.length === 0) {
-            return false;
+        try {
+            if (!tagList || !tagList.length || tagList.length === 0) {
+                return false;
+            }
+            return tagList.some(compareTag => compareTag.key === tag.key);
+        } catch (Error) {
+            console.error("Error at 'SectionComponent=>listContainsTagList'", Error);
         }
-        return tagList.some(compareTag => compareTag.key === tag.key);
     };
     const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
-        return filterText
-            ? pickerTags.filter(
-                tag => tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 && !listContainsTagList(tag, tagList),
-            )
-            : [];
+        try {
+            return filterText
+                ? pickerTags.filter(
+                    tag => tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 && !listContainsTagList(tag, tagList),
+                )
+                : [];
+        } catch (Error) {
+            console.error("Error at 'SectionComponent=>filterSuggestedTags'", Error);
+        }
     };
 
     const getTextFromItem = (item: ITag) => item.name;
     const picker = React.useRef<IBasePicker<ITag>>(null);
     const onItemSelected = React.useCallback((item: ITag): ITag | null => {
-        if (picker.current && listContainsTagList(item, picker.current.items)) {
-            return null;
+        try {
+            if (picker.current && listContainsTagList(item, picker.current.items)) {
+                return null;
+            }
+            props.onTitleChange(props.id, props.locationId, item.name, item.key);
+            return item;
+        } catch (Error) {
+            console.error("Error at 'SectionComponent=>onItemSelected'", Error);
         }
-        props.onTitleChange(props.id, props.locationId, item.name, item.key);
-        return item;
     }, []);
 
     const filterSectionTitle = (type: number) => {
@@ -123,13 +143,17 @@ function SectionItemComponent(props) {
                 return title;
             }
         } catch (Error) {
-            console.log("Error at SectionComponent=>filterSectionTitle-> " + Error);
+            console.error("Error at 'SectionComponent=>filterSectionTitle'", Error);
         }
     };
 
     const onItemChanged = (selectedItems: ITag[]): void => {
-        console.log("SectionComponent=>onItemChanged->");
-        console.log(selectedItems);
+        try {
+            console.log("SectionComponent=>onItemChanged->");
+            console.log(selectedItems);
+        } catch (Error) {
+            console.error("Error at 'SectionComponent=>onItemChanged'", Error);
+        }
     };
 
     React.useEffect(() => {
@@ -140,7 +164,7 @@ function SectionItemComponent(props) {
             // updatedSectionItemTitle = currentSectionItemTitle;
             setSectionItemTitle(props.title);
         } catch (Error) {
-            console.log("Error at SectionItemComponent=>useEffect-> " + Error);
+            console.error("Error at 'SectionComponent=>useEffect'", Error);
         }
     });
     // console.log(props.locationId + "=>" + filterSectionTitle(1) + "|" + filterSectionTitle(0));
