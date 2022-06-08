@@ -15,7 +15,7 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 function SectionItemComponent(props) {
 
-    console.debug("SectionItemComponent->", props.id, props.title);
+    // console.debug("SectionItemComponent->", props.id, props.title);
     // console.log(props.title);
 
     // console.log(props.sectionItemTitles);

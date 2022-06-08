@@ -8,7 +8,8 @@ import { ActionButton, Stack, IStackStyles, IStackTokens, IStackItemStyles, merg
 import SectionItemComponent from '../SectionItem/SectionItemComponent';
 import ISection from "../../models/ISection";
 import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import ISectionItem from '../../models/ISectionItem';
 import ISectionItemTitle from "../../models/ISectionItemTitle";
 
@@ -50,14 +51,16 @@ const itemStackTokens: IStackTokens = {
     padding: 5,
 };
 
-function SectionComponent(props) {
 
+
+function SectionComponent(props) {
+    // console.log("SectionComponent=>props", props);
     const [sectionItems, setSectionItems] = React.useState(props.section.sectionItems);
     const [isExpanded, setIsSectionExpandedItems] = React.useState(props.section.isExpanded);
     // const sensors = [useSensor(PointerSensor)];    
     const [isDragged, setIsDragged] = React.useState(false);
 
-    //This distance paramenter ensures that drag event is avoided until unless dragged for more than 7px. This is used to prevent the drag event applying for child elements like button
+    //This distance parameter ensures that drag event is avoided until unless dragged for more than 7px. This is used to prevent the drag event applying for child elements like button
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -65,6 +68,19 @@ function SectionComponent(props) {
             },
         })
     );
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id: props.section.locationId.toString() });
+
+    const style = {
+        transition,
+        transform: CSS.Transform.toString(transform),
+    };
 
     // console.log("SectionComponent=>Entry->");
     // console.log(props.section.sectionItems);
@@ -217,7 +233,7 @@ function SectionComponent(props) {
     });
 
     return (
-        <div>
+        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <div>
                 <Stack horizontal disableShrink styles={headerStackStyles} tokens={headerStackTokens}>
                     {

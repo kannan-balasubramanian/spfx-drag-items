@@ -4,7 +4,8 @@ import { ActionButton, PrimaryButton, DefaultButton } from 'office-ui-fabric-rea
 import { IIconProps } from 'office-ui-fabric-react/';
 import { Stack, IStackStyles, IStackTokens, IStackItemStyles, Modal, FontIcon, mergeStyles, Label } from 'office-ui-fabric-react';
 import { DefaultPalette } from 'office-ui-fabric-react';
-
+import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { ISectionsContainerComponentState } from './ISectionsContainerComponentState';
 import ISection from "../../models/ISection";
 import ISectionItem from "../../models/ISectionItem";
@@ -76,21 +77,60 @@ function SectionsContainerComponent(props) {
     const [isDeleteSectionItemModalOpen, setIsDeleteSectionItemModalOpen] = React.useState(false);
     const [sectionIndexToDelete, setSectionIndexToDelete] = React.useState(-1);
     const [sectionItemIndexToDelete, setSectionItemIndexToDelete] = React.useState(-1);
+    const [isDragged, setIsDragged] = React.useState(false);
+
+    //This distance parameter ensures that drag event is avoided until unless dragged for more than 7px. This is used to prevent the drag event applying for child elements like button
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: { y: 7 },
+            },
+        })
+    );
+
+    const onComponentItemDragStart = (event) => {
+        try {
+            console.log("SectionsContainerComponent=>onComponentItemDragStart->");
+            console.log(event.target);
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onComponentItemDragStart'", Error);
+        }
+    };
+
+    const onComponentItemDragEnd = ({ active, over }) => {
+        try {
+            console.log("SectionsContainerComponent=>onComponentItemDragEnd->");
+            if (active.id != over.id) {
+                // setIsDragged(true);
+                // const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
+                // const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
+                // let reIndexedSectionItems = arrayMove(sectionItems, oldIndex, newIndex);
+                // setSectionItems(reIndexedSectionItems);
+                // setSectionItems((sectionItems) => {
+                //     const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
+                //     const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
+                //     return arrayMove(sectionItems, oldIndex, newIndex);
+                // });
+            }
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>onComponentItemDragEnd'", Error);
+        }
+    };
 
     //#region [Green] Section Items - Start
     const onAddNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
         try {
             // console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->");
             // console.log(sectionId + "-" + sectionLocationId + "|" + sectionItemId + "-" + sectionItemLocationId);
-            let newSectionItemId = this.randomNumberGenerator();
-            // let newSectionItemTitle = { id: this.state.sectionItemTitles[(this.state.sections.length + 1)].id, title: this.state.sectionItemTitles[(this.state.sections.length + 1)].title };
+            let newSectionItemId = randomNumberGenerator();
+            // let newSectionItemTitle = { id: sectionItemTitles[(sections.length + 1)].id, title: sectionItemTitles[(sections.length + 1)].title };
             let newSectionItemTitle = undefined;
             let newSectionItemLocationId = (sectionItemLocationId + 1);
             let newSectionItemSectionId = sectionId;
 
             let newSectionItem: ISectionItem = { id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionItemSectionId };
 
-            let tempSectionsFromState = [...this.state.sections];
+            let tempSectionsFromState = [...sections];
             // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
             let tempSectionItemsFromState = [...tempSectionsFromState[sectionLocationId].sectionItems];
             tempSectionItemsFromState.splice(newSectionItemLocationId, 0, newSectionItem);
@@ -109,12 +149,12 @@ function SectionsContainerComponent(props) {
 
     const onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
         try {
-            if (this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
+            if (sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
                 // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
-                this.onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
+                onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
             }
             else {
-                let sectionItemToBeDeletedTitle: string = this.state.sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + this.state.sections[sectionLocationId].title;
+                let sectionItemToBeDeletedTitle: string = sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + sections[sectionLocationId].title;
                 // this.setState({
                 //     deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle,
                 //     isDeleteSectionModalOpen: false,
@@ -129,7 +169,7 @@ function SectionsContainerComponent(props) {
                 setSectionItemIndexToDelete(sectionItemLocationId);
             }
             // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-            // let tempSectionsFromState = [...this.state.sections];
+            // let tempSectionsFromState = [...sections];
             // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
             // this.setState({ sections: tempSectionsFromState });
         } catch (Error) {
@@ -145,7 +185,7 @@ function SectionsContainerComponent(props) {
                 // this.setState({ isDeleteSectionItemModalOpen: false });
                 setIsDeleteSectionItemModalOpen(false);
 
-                let tempSectionsFromState = [...this.state.sections];
+                let tempSectionsFromState = [...sections];
                 tempSectionsFromState[sectionIndexToDeleteFromSection].sectionItems.splice(sectionItemIndexToDeleteFromSection, 1);
                 // this.setState({
                 //     sections: tempSectionsFromState,
@@ -160,10 +200,10 @@ function SectionsContainerComponent(props) {
                 // this.setState({ isDeleteSectionItemModalOpen: false });
                 setIsDeleteSectionItemModalOpen(false);
                 // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-                let tempSectionsFromState = [...this.state.sections];
-                if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
-                    // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + this.state.sectionItemIndexToDelete + "|" + this.state.sectionItemIndexToDelete);
-                    tempSectionsFromState[this.state.sectionIndexToDelete].sectionItems.splice(this.state.sectionItemIndexToDelete, 1);
+                let tempSectionsFromState = [...sections];
+                if (tempSectionsFromState[sectionIndexToDelete] != undefined) {
+                    // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
+                    tempSectionsFromState[sectionIndexToDelete].sectionItems.splice(sectionItemIndexToDelete, 1);
                     // this.setState({
                     //     sections: tempSectionsFromState,
                     //     sectionIndexToDelete: -1,
@@ -191,7 +231,7 @@ function SectionsContainerComponent(props) {
                 newSectionItems.push({ id: section.sectionItems[i].id, title: section.sectionItems[i].title, locationId: i, sectionId: section.sectionItems[i].sectionId });
             }
 
-            let tempSectionsFromState = [...this.state.sections];
+            let tempSectionsFromState = [...sections];
             // tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
             let tempSectionsSectionItemsFromState = [...tempSectionsFromState[section.locationId].sectionItems];
             tempSectionsSectionItemsFromState = newSectionItems;
@@ -218,7 +258,7 @@ function SectionsContainerComponent(props) {
                 let newSectionItemTitleId: number = 0;
                 let newSectionItemTitleTitle: string = "";
                 if (indexA > 0) {
-                    newSectionItemTitleId = this.randomNumberGenerator();
+                    newSectionItemTitleId = randomNumberGenerator();
                     newSectionItemTitleTitle = ("Item " + (indexA));
                 }
                 newSectionItemTitles.push({ id: newSectionItemTitleId, title: newSectionItemTitleTitle });
@@ -230,15 +270,15 @@ function SectionsContainerComponent(props) {
             for (let indexX = 0; indexX < 1; indexX++) {
                 let sectionItemLocationId: number = 0;
                 let newSectionItems: ISectionItem[] = [];
-                let newSectionId: number = this.randomNumberGenerator();
+                let newSectionId: number = randomNumberGenerator();
                 let newSectionTitle: string = undefined;
 
                 for (let indexY = 0; indexY < 1; indexY++) {
                     if (indexX === 0) {
-                        newSectionItems.push({ id: this.randomNumberGenerator(), title: undefined, locationId: sectionItemLocationId, sectionId: newSectionId });
+                        newSectionItems.push({ id: randomNumberGenerator(), title: undefined, locationId: sectionItemLocationId, sectionId: newSectionId });
                     }
                     else {
-                        newSectionItems.push({ id: this.randomNumberGenerator(), title: { id: newSectionItemTitles[indexY].id, title: newSectionItemTitles[indexY].title }, locationId: sectionItemLocationId, sectionId: newSectionId });
+                        newSectionItems.push({ id: randomNumberGenerator(), title: { id: newSectionItemTitles[indexY].id, title: newSectionItemTitles[indexY].title }, locationId: sectionItemLocationId, sectionId: newSectionId });
                     }
                     sectionItemLocationId++;
                 }
@@ -255,17 +295,17 @@ function SectionsContainerComponent(props) {
 
     const onAddNewSectionFromSection = (sectionId, sectionLocationId) => {
         try {
-            let newSectionId = this.randomNumberGenerator();
+            let newSectionId = randomNumberGenerator();
             let newSectionTitle = undefined;
 
-            let newSectionItemId = this.randomNumberGenerator();
+            let newSectionItemId = randomNumberGenerator();
             let newSectionItemTitle = undefined;
             let newSectionItemLocationId = 0;
 
             let newSectionItem: ISectionItem[] = [{ id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionId }];
             let newSection: ISection = { id: newSectionId, title: newSectionTitle, locationId: -1, isExpanded: true, sectionItems: newSectionItem };
 
-            let tempSectionsFromState = [...this.state.sections];
+            let tempSectionsFromState = [...sections];
             // console.log(tempSectionsFromState);
             tempSectionsFromState.splice((sectionLocationId + 1), 0, newSection);
             tempSectionsFromState.forEach((item, index, arr) => {
@@ -282,13 +322,13 @@ function SectionsContainerComponent(props) {
 
     const onDeleteSectionFromSection = (sectionId, sectionLocationId) => {
         try {
-            if (this.state.sections[sectionLocationId].title == undefined) {
+            if (sections[sectionLocationId].title == undefined) {
                 // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
                 // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>onConfirmDeleteSectionFromSection->" + sectionLocationId);
-                this.onConfirmDeleteSectionFromSection(sectionLocationId);
+                onConfirmDeleteSectionFromSection(sectionLocationId);
             }
             else {
-                let sectionToBeDeletedTitle: string = this.state.sections[sectionLocationId].title;
+                let sectionToBeDeletedTitle: string = sections[sectionLocationId].title;
                 // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>->State->" + sectionLocationId);
                 // this.setState({
                 //     deleteSectionItemModalWarningText: sectionToBeDeletedTitle,
@@ -302,7 +342,7 @@ function SectionsContainerComponent(props) {
                 setSectionIndexToDelete(sectionLocationId);
             }
             // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-            // let tempSectionsFromState = [...this.state.sections];
+            // let tempSectionsFromState = [...sections];
             // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
             // this.setState({ sections: tempSectionsFromState });
         } catch (Error) {
@@ -314,13 +354,13 @@ function SectionsContainerComponent(props) {
         try {
             // console.log("SectionsContainerComponent=>onConfirmDeleteSectionFromSection->");
             // console.log(sectionIndexToDelete);
-            // console.log(this.state.sectionIndexToDelete);
-            if (this.state.sectionIndexToDelete == -1) {
+            // console.log(sectionIndexToDelete);
+            if (sectionIndexToDelete == -1) {
                 // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From onDeleteSectionFromSection->" + sectionIndexToDelete);
                 // this.setState({ isDeleteSectionModalOpen: false });
                 setIsDeleteSectionModalOpen(false);
 
-                let tempSectionsFromState = [...this.state.sections];
+                let tempSectionsFromState = [...sections];
                 tempSectionsFromState.splice(sectionIndexToDeleteFromSection, 1);
                 // this.setState({
                 //     sections: tempSectionsFromState,
@@ -333,10 +373,10 @@ function SectionsContainerComponent(props) {
                 // this.setState({ isDeleteSectionModalOpen: false });
                 setIsDeleteSectionModalOpen(false);
                 // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-                let tempSectionsFromState = [...this.state.sections];
-                if (tempSectionsFromState[this.state.sectionIndexToDelete] != undefined) {
-                    // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From State->" + this.state.sectionIndexToDelete);
-                    tempSectionsFromState.splice(this.state.sectionIndexToDelete, 1);
+                let tempSectionsFromState = [...sections];
+                if (tempSectionsFromState[sectionIndexToDelete] != undefined) {
+                    // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From State->" + sectionIndexToDelete);
+                    tempSectionsFromState.splice(sectionIndexToDelete, 1);
                     // this.setState({
                     //     sections: tempSectionsFromState,
                     //     sectionIndexToDelete: -1
@@ -345,8 +385,8 @@ function SectionsContainerComponent(props) {
                     setSectionIndexToDelete(-1);
                 }
             }
-            // console.log("SectionsContainerComponent==>onDeleteNewSectionItemFromSection->Sections Length->" + this.state.sections.length);
-            if (this.state.sections.length <= 1) {
+            // console.log("SectionsContainerComponent==>onDeleteNewSectionItemFromSection->Sections Length->" + sections.length);
+            if (sections.length <= 1) {
                 // this.setState({ isGenerateSectionsButtonDisabled: false });
                 setIsGenerateSectionsButtonDisabled(false);
             }
@@ -367,7 +407,7 @@ function SectionsContainerComponent(props) {
     const onSectionTitleChange = (sectionId: number, sectionLocationId: number, sectionTitle: string) => {
         try {
             // console.log(sectionId + "|" + sectionLocationId + "|" + sectionTitle);
-            let tempSectionsFromState = [...this.state.sections];
+            let tempSectionsFromState = [...sections];
             tempSectionsFromState[sectionLocationId].title = sectionTitle;
             // this.setState({ sections: tempSectionsFromState });
             setSections(tempSectionsFromState);
@@ -379,8 +419,8 @@ function SectionsContainerComponent(props) {
     const viewState = () => {
         try {
             console.log("SectionsContainerComponent=>viewState->");
-            if (this.state.sections.length > 0) {
-                console.log(this.state.sections);
+            if (sections.length > 0) {
+                console.log(sections);
             }
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>viewState'", Error);
@@ -402,35 +442,39 @@ function SectionsContainerComponent(props) {
     return (
         <div>
             <div>
-                <ActionButton iconProps={generateIcon} onClick={this.onGenerateSectionsButtonClicked.bind(this)} disabled={this.state.isGenerateSectionsButtonDisabled} >Generate Sections</ActionButton>
-                <ActionButton iconProps={viewIcon} onClick={this.viewState.bind(this)} >View 'State' in console</ActionButton>
+                <ActionButton iconProps={generateIcon} onClick={onGenerateSectionsButtonClicked.bind(this)} disabled={isGenerateSectionsButtonDisabled} >Generate Sections</ActionButton>
+                <ActionButton iconProps={viewIcon} onClick={viewState.bind(this)} >View 'State' in console</ActionButton>
             </div>
             <div>
                 <div>
-                    {this.state.sections.length > 0 ?
-                        < Stack styles={stackStyles} tokens={stackTokens}>
-                            {
-                                this.state.sections.map((eachSection) => {
-                                    return (<div><SectionComponent
-                                        onAddSection={this.onAddNewSectionFromSection}
-                                        onDeleteSection={this.onDeleteSectionFromSection}
-                                        onUpdateParentState={this.onUpdateParentStateCallFromSection}
-                                        onAddSectionItem={this.onAddNewSectionItemFromSection}
-                                        onDeleteSectionItem={this.onDeleteNewSectionItemFromSection}
-                                        onSectionTitleChange={this.onSectionTitleChange}
-                                        sectionItemTitles={this.state.sectionItemTitles}
-                                        section={eachSection}
-                                        key={eachSection.locationId} /></div>);
-                                })
+                    {sections.length > 0 ?
+                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
+                            <SortableContext items={sections.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
+                                <Stack styles={stackStyles} tokens={stackTokens}>
+                                    {
+                                        sections.map((eachSection) => {
+                                            return (<div key={eachSection.locationId}><SectionComponent
+                                                onAddSection={onAddNewSectionFromSection}
+                                                onDeleteSection={onDeleteSectionFromSection}
+                                                onUpdateParentState={onUpdateParentStateCallFromSection}
+                                                onAddSectionItem={onAddNewSectionItemFromSection}
+                                                onDeleteSectionItem={onDeleteNewSectionItemFromSection}
+                                                onSectionTitleChange={onSectionTitleChange}
+                                                sectionItemTitles={sectionItemTitles}
+                                                section={eachSection}
+                                                key={eachSection.locationId} /></div>);
+                                        })
 
-                            }
-                        </Stack>
+                                    }
+                                </Stack>
+                            </SortableContext>
+                        </DndContext>
                         : <div></div>
                     }
                 </div>
             </div>
             <div>
-                <Modal isOpen={this.state.isDeleteSectionItemModalOpen}>
+                <Modal isOpen={isDeleteSectionItemModalOpen}>
                     <Stack>
                         <Stack horizontal styles={deleteModalHeaderStackStyles} tokens={deleteModalHeaderStackTokens}>
                             <Stack.Item align="baseline" tokens={deleteModalHeaderStackItemTokens}>
@@ -442,20 +486,20 @@ function SectionsContainerComponent(props) {
                         </Stack>
                         <Stack>
                             <Stack.Item align='auto' tokens={deleteModalHeaderStackItemTokens}>
-                                Are you sure you want to delete '{this.state.deleteSectionItemModalWarningText}' ?
+                                Are you sure you want to delete '{deleteSectionItemModalWarningText}' ?
                             </Stack.Item>
                         </Stack>
                         <Stack styles={deleteModalStackItemStyles} tokens={deleteModalItemStackTokens}>
                             <Stack.Item>
-                                <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={this.onConfirmDeleteNewSectionItemFromSection.bind(-1, -1)}></PrimaryButton>
+                                <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={onConfirmDeleteNewSectionItemFromSection.bind(-1, -1)}></PrimaryButton>
                             </Stack.Item>
                             <Stack.Item>
-                                <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={this.onConfirmNotDeleteNewSectionItemFromSection}></DefaultButton>
+                                <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={onConfirmNotDeleteNewSectionItemFromSection}></DefaultButton>
                             </Stack.Item>
                         </Stack>
                     </Stack>
                 </Modal>
-                <Modal isOpen={this.state.isDeleteSectionModalOpen}>
+                <Modal isOpen={isDeleteSectionModalOpen}>
                     <Stack>
                         <Stack horizontal styles={deleteModalHeaderStackStyles} tokens={deleteModalHeaderStackTokens}>
                             <Stack.Item align="baseline" tokens={deleteModalHeaderStackItemTokens}>
@@ -467,15 +511,15 @@ function SectionsContainerComponent(props) {
                         </Stack>
                         <Stack>
                             <Stack.Item align='auto' tokens={deleteModalHeaderStackItemTokens}>
-                                Are you sure you want to delete '{this.state.deleteSectionItemModalWarningText}' ?
+                                Are you sure you want to delete '{deleteSectionItemModalWarningText}' ?
                             </Stack.Item>
                         </Stack>
                         <Stack styles={deleteModalStackItemStyles} tokens={deleteModalItemStackTokens}>
                             <Stack.Item>
-                                <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={this.onConfirmDeleteSectionFromSection.bind(-1)}></PrimaryButton>
+                                <PrimaryButton text="Yes, delete" iconProps={yesIcon} onClick={onConfirmDeleteSectionFromSection.bind(-1)}></PrimaryButton>
                             </Stack.Item>
                             <Stack.Item>
-                                <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={this.onConfirmNotDeleteNewSectionFromSection}></DefaultButton>
+                                <DefaultButton text="No, do not delete" iconProps={noIcon} onClick={onConfirmNotDeleteNewSectionFromSection}></DefaultButton>
                             </Stack.Item>
                         </Stack>
                     </Stack>
