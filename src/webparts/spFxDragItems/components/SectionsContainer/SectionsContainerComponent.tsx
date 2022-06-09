@@ -70,7 +70,7 @@ const deleteModalHeaderLabelStyles = mergeStyles({
 
 function SectionsContainerComponent(props) {
     const [sectionItemTitles, setSectionItemTitles] = React.useState([]);
-    const [sections, setSections] = React.useState([]);
+    const [sections, setSections] = React.useState<ISection[]>([]);
     const [isGenerateSectionsButtonDisabled, setIsGenerateSectionsButtonDisabled] = React.useState(false);
     const [deleteSectionItemModalWarningText, setDeleteSectionItemModalWarningText] = React.useState("");
     const [isDeleteSectionModalOpen, setIsDeleteSectionModalOpen] = React.useState(false);
@@ -79,6 +79,7 @@ function SectionsContainerComponent(props) {
     const [sectionItemIndexToDelete, setSectionItemIndexToDelete] = React.useState(-1);
     const [isDragged, setIsDragged] = React.useState(false);
 
+    //#region [Blue] Section Container - Start
     //This distance parameter ensures that drag event is avoided until unless dragged for more than 7px. This is used to prevent the drag event applying for child elements like button
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -99,13 +100,18 @@ function SectionsContainerComponent(props) {
 
     const onComponentItemDragEnd = ({ active, over }) => {
         try {
-            console.log("SectionsContainerComponent=>onComponentItemDragEnd->");
+            console.log("SectionsContainerComponent=>onComponentItemDragEnd->", active.id, over.id, sections);
             if (active.id != over.id) {
-                // setIsDragged(true);
-                // const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
-                // const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
-                // let reIndexedSectionItems = arrayMove(sectionItems, oldIndex, newIndex);
-                // setSectionItems(reIndexedSectionItems);
+                setIsDragged(true);
+                const oldIndex = sections.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
+                const newIndex = sections.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
+                console.log("SectionsContainerComponent=>onComponentItemDragEnd->IndexOf->", oldIndex, newIndex);
+                let reIndexedSections = arrayMove([...sections], oldIndex, newIndex);
+                let reLocationIndexedSections: ISection[] = [];
+                for (let i = 0; i < reIndexedSections.length; i++) {
+                    reLocationIndexedSections.push({ id: reIndexedSections[i].id, locationId: i, title: reIndexedSections[i].title, sectionItems: reIndexedSections[i].sectionItems, isExpanded: reIndexedSections[i].isExpanded });
+                }
+                setSections(reLocationIndexedSections);
                 // setSectionItems((sectionItems) => {
                 //     const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
                 //     const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
@@ -116,6 +122,7 @@ function SectionsContainerComponent(props) {
             console.error("Error at 'SectionsContainerComponent=>onComponentItemDragEnd'", Error);
         }
     };
+    //#endregion [Green] Section Container - End
 
     //#region [Green] Section Items - Start
     const onAddNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
