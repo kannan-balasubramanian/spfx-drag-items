@@ -54,7 +54,6 @@ const itemStackTokens: IStackTokens = {
 
 
 function SectionComponent(props) {
-    // console.log("SectionComponent=>props", props);
     const [sectionItems, setSectionItems] = React.useState(props.section.sectionItems);
     const [isExpanded, setIsSectionExpandedItems] = React.useState(props.section.isExpanded);
     // const sensors = [useSensor(PointerSensor)];    
@@ -82,13 +81,10 @@ function SectionComponent(props) {
         transform: CSS.Transform.toString(transform),
     };
 
-    // console.log("SectionComponent=>Entry->");
-    // console.log(props.section.sectionItems);
 
     const onComponentItemDragStart = (event) => {
         try {
             // console.log("SectionComponent=>onComponentItemDragStart->");
-            // console.log(event.target);
         } catch (Error) {
             console.error("Error at 'SectionComponent=>onComponentItemDragStart'", Error);
         }
@@ -98,15 +94,12 @@ function SectionComponent(props) {
         try {
             if (active.id != over.id) {
                 setIsDragged(true);
+
                 const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
                 const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
                 let reIndexedSectionItems = arrayMove(sectionItems, oldIndex, newIndex);
+
                 setSectionItems(reIndexedSectionItems);
-                // setSectionItems((sectionItems) => {
-                //     const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
-                //     const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
-                //     return arrayMove(sectionItems, oldIndex, newIndex);
-                // });
             }
         } catch (Error) {
             console.error("Error at 'SectionComponent=>onComponentItemDragEnd'", Error);
@@ -144,9 +137,6 @@ function SectionComponent(props) {
 
     const onSectionItemAdd = (sectionItemId, sectionItemLocationId) => {
         try {
-            // console.log("SectionComponent=>onSectionItemDelete->");
-            // console.log(sectionItemId);
-            // console.log(sectionItemLocationId);
             // props.onDeleteSectionItem(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
             props.onAddSectionItem(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
         } catch (Error) {
@@ -156,9 +146,6 @@ function SectionComponent(props) {
 
     const onSectionItemDelete = (sectionItemId, sectionItemLocationId) => {
         try {
-            // console.log("SectionComponent=>onSectionItemDelete->");
-            // console.log(sectionItemId);
-            // console.log(sectionItemLocationId);
             props.onDeleteSectionItem(props.section.id, props.section.locationId, sectionItemId, sectionItemLocationId);
         } catch (Error) {
             console.error("Error at 'SectionComponent=>onSectionItemDelete'", Error);
@@ -182,15 +169,10 @@ function SectionComponent(props) {
 
     const updateParentStateOnSectionItemTitleChange = (id: number, locationId: number, newTitle: string, newTitleKey: number) => {
         try {
-            // let updatedSectionItem: ISectionItem = sectionItems[props.section.locationId];
-            // // console.log(updatedSectionItem.title);
-            // updatedSectionItem.title = newTitleText;
-
             let updatedSectionItems: ISectionItem[] = props.section.sectionItems;
             let updateSectionItemsTitle: ISectionItemTitle = { id: newTitleKey, title: newTitle };
+
             updatedSectionItems[locationId].title = updateSectionItemsTitle;
-            // console.log(updatedSectionItem);
-            // props.onUpdateParentState(updatedSectionItem);
 
             let updatedSection: ISection = {
                 id: props.section.id,
@@ -199,7 +181,6 @@ function SectionComponent(props) {
                 isExpanded: props.section.isExpanded,
                 sectionItems: updatedSectionItems,
             };
-            // console.log(updatedSection);
             props.onUpdateParentState(updatedSection);
         } catch (Error) {
             console.error("Error at 'SectionComponent=>updateParentStateOnSectionItemTitleChange'", Error);
@@ -281,5 +262,3 @@ function SectionComponent(props) {
 }
 
 export default SectionComponent;
-
-//https://www.youtube.com/watch?v=eDc2xowd0RI

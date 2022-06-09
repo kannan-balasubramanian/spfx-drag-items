@@ -15,11 +15,6 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 function SectionItemComponent(props) {
 
-    // console.debug("SectionItemComponent->", props.id, props.title);
-    // console.log(props.title);
-
-    // console.log(props.sectionItemTitles);
-
     const [sectionItemTitle, setSectionItemTitle] = React.useState(props.title);
 
     const deleteIcon: IIconProps = { iconName: 'Delete' };
@@ -64,7 +59,6 @@ function SectionItemComponent(props) {
 
     const onAddButtonClick = () => {
         try {
-            // console.log("SectionItemComponent=>onAddButtonClick->" + props.id + "|" + props.locationId);
             props.onAddSectionItem(props.id, props.locationId);
         } catch (Error) {
             console.error("Error at 'SectionComponent=>SectionItemComponent'", Error);
@@ -73,7 +67,6 @@ function SectionItemComponent(props) {
 
     const onItemDeleteButtonClick = () => {
         try {
-            // console.log("SectionItemComponent=>onDeleteButtonClick->");
             props.onDeleteSectionItem(props.id, props.locationId);
         } catch (Error) {
             console.error("Error at 'SectionComponent=>onItemDeleteButtonClick'", Error);
@@ -128,18 +121,12 @@ function SectionItemComponent(props) {
 
     const filterSectionTitle = (type: number) => {
         try {
-            // console.log("SectionComponent=>filterSectionTitle->testTags");
-            // console.log(props.title);
-            // console.log(props.sectionItemTitles);
+
             if (type === 0) {
-                // let id = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].id;                
                 let id = pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key;
-                // console.log(props.title.id + "|" + id);
                 return id;
             } else if (type === 1) {
-                // let title = props.sectionItemTitles.filter(sectionItemTitleTemp => sectionItemTitleTemp.title == sectionItemTitle.title)[0].title;
                 let title = pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.name == props.title.title)[0].name;
-                // console.log(props.title.title + "|" + title);
                 return title;
             }
         } catch (Error) {
@@ -158,7 +145,6 @@ function SectionItemComponent(props) {
 
     React.useEffect(() => {
         try {
-            // console.log("SectionItemComponent=>useEffect->");
             // let updatedSectionItemTitle = props.title;
             // let currentSectionItemTitle = [...sectionItemTitle];
             // updatedSectionItemTitle = currentSectionItemTitle;
@@ -167,7 +153,7 @@ function SectionItemComponent(props) {
             console.error("Error at 'SectionComponent=>useEffect'", Error);
         }
     });
-    // console.log(props.locationId + "=>" + filterSectionTitle(1) + "|" + filterSectionTitle(0));
+
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Stack horizontal disableShrink styles={stackStyles} tokens={stackTokens}>

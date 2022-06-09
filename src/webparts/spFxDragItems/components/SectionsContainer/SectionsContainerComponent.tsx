@@ -89,10 +89,10 @@ function SectionsContainerComponent(props) {
         })
     );
 
+
     const onComponentItemDragStart = (event) => {
         try {
-            console.log("SectionsContainerComponent=>onComponentItemDragStart->");
-            console.log(event.target);
+            // console.log(event.target);
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onComponentItemDragStart'", Error);
         }
@@ -100,23 +100,16 @@ function SectionsContainerComponent(props) {
 
     const onComponentItemDragEnd = ({ active, over }) => {
         try {
-            console.log("SectionsContainerComponent=>onComponentItemDragEnd->", active.id, over.id, sections);
             if (active.id != over.id) {
                 setIsDragged(true);
                 const oldIndex = sections.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
                 const newIndex = sections.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
                 console.log("SectionsContainerComponent=>onComponentItemDragEnd->IndexOf->", oldIndex, newIndex);
                 let reIndexedSections = arrayMove([...sections], oldIndex, newIndex);
-                let reLocationIndexedSections: ISection[] = [];
-                for (let i = 0; i < reIndexedSections.length; i++) {
-                    reLocationIndexedSections.push({ id: reIndexedSections[i].id, locationId: i, title: reIndexedSections[i].title, sectionItems: reIndexedSections[i].sectionItems, isExpanded: reIndexedSections[i].isExpanded });
-                }
-                setSections(reLocationIndexedSections);
-                // setSectionItems((sectionItems) => {
-                //     const oldIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
-                //     const newIndex = sectionItems.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
-                //     return arrayMove(sectionItems, oldIndex, newIndex);
-                // });
+                reIndexedSections.forEach((item, index, arr) => {
+                    item.locationId = index;
+                });
+                setSections(reIndexedSections);
             }
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onComponentItemDragEnd'", Error);
@@ -124,13 +117,11 @@ function SectionsContainerComponent(props) {
     };
     //#endregion [Green] Section Container - End
 
-    //#region [Green] Section Items - Start
+    //#region [Green] Section Items - Start    
     const onAddNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
         try {
-            // console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->");
-            // console.log(sectionId + "-" + sectionLocationId + "|" + sectionItemId + "-" + sectionItemLocationId);
+            console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->", sectionId, sectionLocationId, sectionItemId, sectionItemLocationId);
             let newSectionItemId = randomNumberGenerator();
-            // let newSectionItemTitle = { id: sectionItemTitles[(sections.length + 1)].id, title: sectionItemTitles[(sections.length + 1)].title };
             let newSectionItemTitle = undefined;
             let newSectionItemLocationId = (sectionItemLocationId + 1);
             let newSectionItemSectionId = sectionId;
@@ -138,16 +129,13 @@ function SectionsContainerComponent(props) {
             let newSectionItem: ISectionItem = { id: newSectionItemId, title: newSectionItemTitle, locationId: newSectionItemLocationId, sectionId: newSectionItemSectionId };
 
             let tempSectionsFromState = [...sections];
-            // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
             let tempSectionItemsFromState = [...tempSectionsFromState[sectionLocationId].sectionItems];
             tempSectionItemsFromState.splice(newSectionItemLocationId, 0, newSectionItem);
             tempSectionItemsFromState.forEach((item, index, arr) => {
                 item.locationId = index;
             });
             tempSectionsFromState[sectionLocationId].sectionItems = tempSectionItemsFromState;
-            // console.log(tempSectionsFromState[sectionLocationId].sectionItems);
-            // tempSectionsFromState[sectionLocationId].sectionItems.push(newSectionItem);
-            // this.setState({ sections: tempSectionsFromState });
+
             setSections(tempSectionsFromState);
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onAddNewSectionItemFromSection'", Error);
@@ -157,28 +145,17 @@ function SectionsContainerComponent(props) {
     const onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
         try {
             if (sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
-                // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
                 onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
             }
             else {
                 let sectionItemToBeDeletedTitle: string = sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + sections[sectionLocationId].title;
-                // this.setState({
-                //     deleteSectionItemModalWarningText: sectionItemToBeDeletedTitle,
-                //     isDeleteSectionModalOpen: false,
-                //     isDeleteSectionItemModalOpen: true,
-                //     sectionIndexToDelete: sectionLocationId,
-                //     sectionItemIndexToDelete: sectionItemLocationId
-                // });
+
                 setDeleteSectionItemModalWarningText(sectionItemToBeDeletedTitle);
                 setIsDeleteSectionModalOpen(false);
                 setIsDeleteSectionItemModalOpen(true);
                 setSectionIndexToDelete(sectionLocationId);
                 setSectionItemIndexToDelete(sectionItemLocationId);
             }
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-            // let tempSectionsFromState = [...sections];
-            // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
-            // this.setState({ sections: tempSectionsFromState });
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onDeleteNewSectionItemFromSection'", Error);
         }
@@ -186,36 +163,23 @@ function SectionsContainerComponent(props) {
 
     const onConfirmDeleteNewSectionItemFromSection = (sectionIndexToDeleteFromSection?: number, sectionItemIndexToDeleteFromSection?: number) => {
         try {
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
             if (sectionIndexToDeleteFromSection != -1 && sectionItemIndexToDeleteFromSection != -1) {
-                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Index Minus One->" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
-                // this.setState({ isDeleteSectionItemModalOpen: false });
                 setIsDeleteSectionItemModalOpen(false);
 
                 let tempSectionsFromState = [...sections];
                 tempSectionsFromState[sectionIndexToDeleteFromSection].sectionItems.splice(sectionItemIndexToDeleteFromSection, 1);
-                // this.setState({
-                //     sections: tempSectionsFromState,
-                //     sectionIndexToDelete: -1,
-                //     sectionItemIndexToDelete: -1
-                // });
+
                 setSections(tempSectionsFromState);
                 setSectionIndexToDelete(-1);
                 setSectionItemIndexToDelete(-1);
             }
             else {
-                // this.setState({ isDeleteSectionItemModalOpen: false });
                 setIsDeleteSectionItemModalOpen(false);
-                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
+
                 let tempSectionsFromState = [...sections];
                 if (tempSectionsFromState[sectionIndexToDelete] != undefined) {
-                    // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->Actual Index->" + sectionItemIndexToDelete + "|" + sectionItemIndexToDelete);
                     tempSectionsFromState[sectionIndexToDelete].sectionItems.splice(sectionItemIndexToDelete, 1);
-                    // this.setState({
-                    //     sections: tempSectionsFromState,
-                    //     sectionIndexToDelete: -1,
-                    //     sectionItemIndexToDelete: -1
-                    // });
+
                     setSections(tempSectionsFromState);
                     setSectionIndexToDelete(-1);
                     setSectionItemIndexToDelete(-1);
@@ -227,7 +191,6 @@ function SectionsContainerComponent(props) {
     };
 
     const onConfirmNotDeleteNewSectionItemFromSection = () => {
-        // this.setState({ isDeleteSectionItemModalOpen: false });
         setIsDeleteSectionItemModalOpen(false);
     };
 
@@ -239,12 +202,10 @@ function SectionsContainerComponent(props) {
             }
 
             let tempSectionsFromState = [...sections];
-            // tempSectionsFromState[section.locationId].sectionItems = newSectionItems;
             let tempSectionsSectionItemsFromState = [...tempSectionsFromState[section.locationId].sectionItems];
             tempSectionsSectionItemsFromState = newSectionItems;
             tempSectionsFromState[section.locationId].sectionItems = tempSectionsSectionItemsFromState;
 
-            // this.setState({ sections: tempSectionsFromState });
             setSections(tempSectionsFromState);
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onUpdateParentStateCallFromSection'", Error);
@@ -255,7 +216,6 @@ function SectionsContainerComponent(props) {
     //#region [Orange] Section - Start
     const onGenerateSectionsButtonClicked = (event?: React.MouseEvent<HTMLButtonElement>) => {
         try {
-            // this.setState({ isGenerateSectionsButtonDisabled: true });
             setIsGenerateSectionsButtonDisabled(true);
             let newSections: ISection[] = [];
             let newSectionItemTitles: ISectionItemTitle[] = [];
@@ -271,7 +231,6 @@ function SectionsContainerComponent(props) {
                 newSectionItemTitles.push({ id: newSectionItemTitleId, title: newSectionItemTitleTitle });
             }
 
-            // this.setState({ sectionItemTitles: newSectionItemTitles });
             setSectionItemTitles(newSectionItemTitles);
 
             for (let indexX = 0; indexX < 1; indexX++) {
@@ -292,7 +251,6 @@ function SectionsContainerComponent(props) {
                 newSections.push({ id: newSectionId, title: newSectionTitle, locationId: sectionLocationId, isExpanded: true, sectionItems: newSectionItems });
                 sectionLocationId++;
 
-                // this.setState({ sections: newSections });
                 setSections(newSections);
             }
         } catch (Error) {
@@ -313,14 +271,11 @@ function SectionsContainerComponent(props) {
             let newSection: ISection = { id: newSectionId, title: newSectionTitle, locationId: -1, isExpanded: true, sectionItems: newSectionItem };
 
             let tempSectionsFromState = [...sections];
-            // console.log(tempSectionsFromState);
             tempSectionsFromState.splice((sectionLocationId + 1), 0, newSection);
             tempSectionsFromState.forEach((item, index, arr) => {
                 item.locationId = index;
             });
-            // console.log(tempSectionsFromState);
 
-            // this.setState({ sections: tempSectionsFromState });
             setSections(tempSectionsFromState);
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onAddNewSectionFromSection'", Error);
@@ -330,28 +285,16 @@ function SectionsContainerComponent(props) {
     const onDeleteSectionFromSection = (sectionId, sectionLocationId) => {
         try {
             if (sections[sectionLocationId].title == undefined) {
-                // this.setState({ isDeleteSectionItemModalOpen: false, sectionItemIndexToDelete: sectionLocationId, sectionItemIndexToDelete: sectionItemLocationId });
-                // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>onConfirmDeleteSectionFromSection->" + sectionLocationId);
                 onConfirmDeleteSectionFromSection(sectionLocationId);
             }
             else {
                 let sectionToBeDeletedTitle: string = sections[sectionLocationId].title;
-                // console.log("SectionsContainerComponent==>onDeleteSectionFromSection=>->State->" + sectionLocationId);
-                // this.setState({
-                //     deleteSectionItemModalWarningText: sectionToBeDeletedTitle,
-                //     isDeleteSectionModalOpen: true,
-                //     isDeleteSectionItemModalOpen: false,
-                //     sectionIndexToDelete: sectionLocationId
-                // });
+
                 setDeleteSectionItemModalWarningText(sectionToBeDeletedTitle);
                 setIsDeleteSectionModalOpen(true);
                 setIsDeleteSectionItemModalOpen(false);
                 setSectionIndexToDelete(sectionLocationId);
             }
-            // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
-            // let tempSectionsFromState = [...sections];
-            // tempSectionsFromState[sectionLocationId].sectionItems.splice(sectionItemLocationId, 1);
-            // this.setState({ sections: tempSectionsFromState });
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onDeleteSectionFromSection'", Error);
         }
@@ -359,42 +302,31 @@ function SectionsContainerComponent(props) {
 
     const onConfirmDeleteSectionFromSection = (sectionIndexToDeleteFromSection?: number) => {
         try {
-            // console.log("SectionsContainerComponent=>onConfirmDeleteSectionFromSection->");
-            // console.log(sectionIndexToDelete);
-            // console.log(sectionIndexToDelete);
+
             if (sectionIndexToDelete == -1) {
-                // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From onDeleteSectionFromSection->" + sectionIndexToDelete);
-                // this.setState({ isDeleteSectionModalOpen: false });
                 setIsDeleteSectionModalOpen(false);
 
                 let tempSectionsFromState = [...sections];
                 tempSectionsFromState.splice(sectionIndexToDeleteFromSection, 1);
-                // this.setState({
-                //     sections: tempSectionsFromState,
-                //     sectionIndexToDelete: -1
-                // });
+                tempSectionsFromState.forEach((item, index, arr) => {
+                    item.locationId = index;
+                });
                 setSections(tempSectionsFromState);
                 setSectionIndexToDelete(sectionIndexToDelete);
             }
             else {
-                // this.setState({ isDeleteSectionModalOpen: false });
                 setIsDeleteSectionModalOpen(false);
-                // console.log("SectionsContainerComponent=>onDeleteNewSectionItemFromSection->");
                 let tempSectionsFromState = [...sections];
                 if (tempSectionsFromState[sectionIndexToDelete] != undefined) {
-                    // console.log("SectionsContainerComponent==>onConfirmDeleteSectionFromSection->From State->" + sectionIndexToDelete);
                     tempSectionsFromState.splice(sectionIndexToDelete, 1);
-                    // this.setState({
-                    //     sections: tempSectionsFromState,
-                    //     sectionIndexToDelete: -1
-                    // });
+                    tempSectionsFromState.forEach((item, index, arr) => {
+                        item.locationId = index;
+                    });
                     setSections(tempSectionsFromState);
                     setSectionIndexToDelete(-1);
                 }
             }
-            // console.log("SectionsContainerComponent==>onDeleteNewSectionItemFromSection->Sections Length->" + sections.length);
             if (sections.length <= 1) {
-                // this.setState({ isGenerateSectionsButtonDisabled: false });
                 setIsGenerateSectionsButtonDisabled(false);
             }
         } catch (Error) {
@@ -404,7 +336,6 @@ function SectionsContainerComponent(props) {
 
     const onConfirmNotDeleteNewSectionFromSection = () => {
         try {
-            // this.setState({ isDeleteSectionModalOpen: false });
             setIsDeleteSectionModalOpen(false);
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onConfirmNotDeleteNewSectionFromSection'", Error);
@@ -413,10 +344,8 @@ function SectionsContainerComponent(props) {
 
     const onSectionTitleChange = (sectionId: number, sectionLocationId: number, sectionTitle: string) => {
         try {
-            // console.log(sectionId + "|" + sectionLocationId + "|" + sectionTitle);
             let tempSectionsFromState = [...sections];
             tempSectionsFromState[sectionLocationId].title = sectionTitle;
-            // this.setState({ sections: tempSectionsFromState });
             setSections(tempSectionsFromState);
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onSectionTitleChange'", Error);
