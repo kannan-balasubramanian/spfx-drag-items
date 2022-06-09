@@ -61,7 +61,7 @@ function SectionItemComponent(props) {
         try {
             props.onAddSectionItem(props.id, props.locationId);
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>SectionItemComponent'", Error);
+            console.error("Error at 'SectionItemComponent=>SectionItemComponent'", Error);
         }
     };
 
@@ -69,7 +69,7 @@ function SectionItemComponent(props) {
         try {
             props.onDeleteSectionItem(props.id, props.locationId);
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>onItemDeleteButtonClick'", Error);
+            console.error("Error at 'SectionItemComponent=>onItemDeleteButtonClick'", Error);
         }
     };
 
@@ -90,7 +90,7 @@ function SectionItemComponent(props) {
             }
             return tagList.some(compareTag => compareTag.key === tag.key);
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>listContainsTagList'", Error);
+            console.error("Error at 'SectionItemComponent=>listContainsTagList'", Error);
         }
     };
     const filterSuggestedTags = (filterText: string, tagList: ITag[]): ITag[] => {
@@ -101,7 +101,7 @@ function SectionItemComponent(props) {
                 )
                 : [];
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>filterSuggestedTags'", Error);
+            console.error("Error at 'SectionItemComponent=>filterSuggestedTags'", Error);
         }
     };
 
@@ -115,7 +115,7 @@ function SectionItemComponent(props) {
             props.onTitleChange(props.id, props.locationId, item.name, item.key);
             return item;
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>onItemSelected'", Error);
+            console.error("Error at 'SectionItemComponent=>onItemSelected'", Error);
         }
     }, []);
 
@@ -130,16 +130,21 @@ function SectionItemComponent(props) {
                 return title;
             }
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>filterSectionTitle'", Error);
+            console.error("Error at 'SectionItemComponent=>filterSectionTitle'", Error);
         }
     };
 
     const onItemChanged = (selectedItems: ITag[]): void => {
         try {
-            console.log("SectionComponent=>onItemChanged->");
-            console.log(selectedItems);
+            console.log("SectionItemComponent=>onItemChanged->", selectedItems);
+            if (selectedItems.length > 0) {
+                props.onTitleChange(props.id, props.locationId, selectedItems[0].name, selectedItems[0].key);
+            }
+            else {
+                props.onTitleChange(props.id, props.locationId, undefined, undefined);
+            }
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>onItemChanged'", Error);
+            console.error("Error at 'SectionItemComponent=>onItemChanged'", Error);
         }
     };
 
@@ -150,7 +155,7 @@ function SectionItemComponent(props) {
             // updatedSectionItemTitle = currentSectionItemTitle;
             setSectionItemTitle(props.title);
         } catch (Error) {
-            console.error("Error at 'SectionComponent=>useEffect'", Error);
+            console.error("Error at 'SectionItemComponent=>useEffect'", Error);
         }
     });
 
@@ -163,7 +168,7 @@ function SectionItemComponent(props) {
                         : <Label>{props.locationId} ({props.id}) {props.title.title} ({props.title.id})</Label>}
                 </Stack.Item>
                 <Stack.Item align="auto" grow styles={stackItemStyles}>
-                    {props.title == undefined ?
+                    {sectionItemTitle == undefined || sectionItemTitle.title == undefined || sectionItemTitle.title.id == undefined ?
                         <TagPicker
                             removeButtonAriaLabel="Remove"
                             onResolveSuggestions={filterSuggestedTags}
@@ -175,8 +180,8 @@ function SectionItemComponent(props) {
                                 ...inputProps,
                                 id: 'picker1',
                             }}
-                            onItemSelected={onItemSelected}
-                        // onChange={onItemChanged}
+                            // onItemSelected={onItemSelected}
+                            onChange={onItemChanged}
                         // selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
                         // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
                         // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
@@ -193,8 +198,8 @@ function SectionItemComponent(props) {
                                 ...inputProps,
                                 id: 'picker1',
                             }}
-                            onItemSelected={onItemSelected}
-                            // onChange={onItemChanged}
+                            // onItemSelected={onItemSelected}
+                            onChange={onItemChanged}
                             selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
                         // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
                         // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}

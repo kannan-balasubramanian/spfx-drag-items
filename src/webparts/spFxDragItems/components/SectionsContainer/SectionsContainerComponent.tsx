@@ -104,7 +104,6 @@ function SectionsContainerComponent(props) {
                 setIsDragged(true);
                 const oldIndex = sections.findIndex(sectionItem => sectionItem.locationId.toString() === active.id);
                 const newIndex = sections.findIndex(sectionItem => sectionItem.locationId.toString() === over.id);
-                console.log("SectionsContainerComponent=>onComponentItemDragEnd->IndexOf->", oldIndex, newIndex);
                 let reIndexedSections = arrayMove([...sections], oldIndex, newIndex);
                 reIndexedSections.forEach((item, index, arr) => {
                     item.locationId = index;
@@ -143,12 +142,21 @@ function SectionsContainerComponent(props) {
     };
 
     const onDeleteNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
+
         try {
             if (sections[sectionLocationId].sectionItems[sectionItemLocationId].title == undefined) {
                 onConfirmDeleteNewSectionItemFromSection(sectionLocationId, sectionItemLocationId);
             }
             else {
-                let sectionItemToBeDeletedTitle: string = sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title + ' in ' + sections[sectionLocationId].title;
+                let sectionItemTitle = sections[sectionLocationId].sectionItems[sectionItemLocationId].title.title;
+                let sectionTitle = sections[sectionLocationId].title;
+                if (sectionItemTitle == undefined) {
+                    sectionItemTitle = '"Empty item with no title"';
+                }
+                if (sectionTitle == undefined) {
+                    sectionTitle = '"Empty section with no title"';
+                }
+                let sectionItemToBeDeletedTitle: string = sectionItemTitle + ' in ' + sectionTitle;
 
                 setDeleteSectionItemModalWarningText(sectionItemToBeDeletedTitle);
                 setIsDeleteSectionModalOpen(false);
@@ -195,10 +203,13 @@ function SectionsContainerComponent(props) {
     };
 
     const onUpdateParentStateCallFromSection = (section: ISection) => {
+        console.log("SectionsContainerComponent=>onUpdateParentStateCallFromSection->", section);
         try {
             let newSectionItems: ISectionItem[] = [];
             for (let i = 0; i < section.sectionItems.length; i++) {
+                // if (section.sectionItems[i].id != -1) {
                 newSectionItems.push({ id: section.sectionItems[i].id, title: section.sectionItems[i].title, locationId: i, sectionId: section.sectionItems[i].sectionId });
+                // }
             }
 
             let tempSectionsFromState = [...sections];
