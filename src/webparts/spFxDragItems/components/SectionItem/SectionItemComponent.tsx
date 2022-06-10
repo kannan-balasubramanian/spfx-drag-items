@@ -136,7 +136,6 @@ function SectionItemComponent(props) {
 
     const onItemChanged = (selectedItems: ITag[]): void => {
         try {
-            console.log("SectionItemComponent=>onItemChanged->", selectedItems);
             if (selectedItems.length > 0) {
                 props.onTitleChange(props.id, props.locationId, selectedItems[0].name, selectedItems[0].key);
             }
@@ -168,7 +167,7 @@ function SectionItemComponent(props) {
                         : <Label>{props.locationId} ({props.id}) {props.title.title} ({props.title.id})</Label>}
                 </Stack.Item>
                 <Stack.Item align="auto" grow styles={stackItemStyles}>
-                    {sectionItemTitle == undefined || sectionItemTitle.title == undefined || sectionItemTitle.title.id == undefined ?
+                    {sectionItemTitle == undefined || sectionItemTitle.id == undefined ?
                         <TagPicker
                             removeButtonAriaLabel="Remove"
                             onResolveSuggestions={filterSuggestedTags}
@@ -200,7 +199,7 @@ function SectionItemComponent(props) {
                             }}
                             // onItemSelected={onItemSelected}
                             onChange={onItemChanged}
-                            selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
+                            selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == sectionItemTitle.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == sectionItemTitle.id)[0].name }]}
                         // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
                         // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
                         />

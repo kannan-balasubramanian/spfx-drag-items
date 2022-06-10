@@ -119,7 +119,6 @@ function SectionsContainerComponent(props) {
     //#region [Green] Section Items - Start    
     const onAddNewSectionItemFromSection = (sectionId, sectionLocationId, sectionItemId, sectionItemLocationId) => {
         try {
-            console.log("SectionsContainerComponent=>onAddNewSectionItemFromSection->", sectionId, sectionLocationId, sectionItemId, sectionItemLocationId);
             let newSectionItemId = randomNumberGenerator();
             let newSectionItemTitle = undefined;
             let newSectionItemLocationId = (sectionItemLocationId + 1);
@@ -134,7 +133,6 @@ function SectionsContainerComponent(props) {
                 item.locationId = index;
             });
             tempSectionsFromState[sectionLocationId].sectionItems = tempSectionItemsFromState;
-
             setSections(tempSectionsFromState);
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>onAddNewSectionItemFromSection'", Error);
@@ -203,7 +201,6 @@ function SectionsContainerComponent(props) {
     };
 
     const onUpdateParentStateCallFromSection = (section: ISection) => {
-        console.log("SectionsContainerComponent=>onUpdateParentStateCallFromSection->", section);
         try {
             let newSectionItems: ISectionItem[] = [];
             for (let i = 0; i < section.sectionItems.length; i++) {
@@ -365,9 +362,9 @@ function SectionsContainerComponent(props) {
 
     const viewState = () => {
         try {
-            console.log("SectionsContainerComponent=>viewState->");
+            console.debug("SectionsContainerComponent=>viewState->");
             if (sections.length > 0) {
-                console.log(sections);
+                console.debug(sections);
             }
         } catch (Error) {
             console.error("Error at 'SectionsContainerComponent=>viewState'", Error);

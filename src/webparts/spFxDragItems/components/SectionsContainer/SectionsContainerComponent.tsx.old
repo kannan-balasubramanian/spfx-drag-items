@@ -420,7 +420,7 @@ export default class SectionsContainerComponent extends React.Component<{}, ISec
 
     private viewState() {
         try {
-            console.log("SectionsContainerComponent=>viewState->");
+            ("SectionsContainerComponent=>viewState->");
             if (this.state.sections.length > 0) {
                 console.log(this.state.sections);
             }
