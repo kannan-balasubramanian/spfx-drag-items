@@ -54,6 +54,7 @@ const itemStackTokens: IStackTokens = {
 
 
 function SectionComponent(props) {
+    // console.debug("SectionComponent=>uiMode", props.uiMode);
     const [sectionItems, setSectionItems] = React.useState(props.section.sectionItems);
     const [isExpanded, setIsSectionExpandedItems] = React.useState(props.section.isExpanded);
     // const sensors = [useSensor(PointerSensor)];    
@@ -218,44 +219,73 @@ function SectionComponent(props) {
             <div>
                 <Stack horizontal disableShrink styles={headerStackStyles} tokens={headerStackTokens}>
                     {
-                        isExpanded === false ?
+                        isExpanded === false
+                            ?
                             <Stack.Item align="auto" styles={headerStackItemStyles}><IconButton iconProps={rightIcon} onClick={onCollapseButtonClick} /></Stack.Item>
-                            : undefined
+                            :
+                            undefined
                     }
                     {
-                        isExpanded === true ?
+                        isExpanded === true
+                            ?
                             <Stack.Item align="auto" styles={headerStackItemStyles}><IconButton iconProps={downIcon} onClick={onExpandButtonClick} /></Stack.Item>
-                            : undefined
+                            :
+                            undefined
                     }
                     <Stack.Item align="auto" styles={headerStackItemStyles}>
                         <Label className={headerLabelStyles} >{props.section.locationId} ({props.section.id}) {props.section.title}</Label>
                     </Stack.Item>
                     <Stack.Item align="auto" grow styles={headerStackItemStyles}>
-                        <TextField required value={props.section.title == undefined ? "" : props.section.title} onChange={onTextChange} />
+                        {
+                            props.uiMode == 0
+                                ?
+                                <Label className={headerLabelStyles} >{props.section.title}</Label>
+                                :
+                                <TextField required value={props.section.title == undefined ? "" : props.section.title} onChange={onTextChange} />
+                        }
+
                     </Stack.Item>
-                    <Stack.Item align="end" styles={headerStackItemStyles}>
-                        <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
-                        <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} />
-                    </Stack.Item>
+                    {
+                        props.uiMode == 1
+                            ?
+                            <Stack.Item align="end" styles={headerStackItemStyles}>
+                                <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
+                                <IconButton iconProps={deleteIcon} onClick={onDeleteButtonClick} />
+                            </Stack.Item>
+                            : undefined
+                    }
                 </Stack>
             </div>
-            {isExpanded === true ?
-                <div>
-                    {sectionItems.length > 0 ?
-                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
-                            <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
-                                <Stack styles={itemStackStyles} tokens={itemStackTokens}>
-                                    {sectionItems.map((sectionItem) =>
-                                        <div key={sectionItem.locationId}><SectionItemComponent onAddSectionItem={onSectionItemAdd} onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} sectionItemTitles={props.sectionItemTitles} onTitleChange={updateParentStateOnSectionItemTitleChange} {...sectionItem} /></div>
-                                    )}
-                                </Stack>
-                            </SortableContext>
-                        </DndContext>
-                        :
-                        <ActionButton iconProps={addIcon} onClick={onSectionItemAdd.bind(props.section.id, 0)} >Add section item</ActionButton>
-                    }
-                </div>
-                : undefined
+            {
+                isExpanded === true
+                    ?
+                    <div>
+                        {
+                            sectionItems.length > 0
+                                ?
+                                props.uiMode == 1
+                                    ?
+                                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
+                                        <SortableContext items={sectionItems.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
+                                            <Stack styles={itemStackStyles} tokens={itemStackTokens}>
+                                                {sectionItems.map((sectionItem) =>
+                                                    <div key={sectionItem.locationId}><SectionItemComponent onAddSectionItem={onSectionItemAdd} onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} sectionItemTitles={props.sectionItemTitles} onTitleChange={updateParentStateOnSectionItemTitleChange} {...sectionItem} uiMode={props.uiMode} /></div>
+                                                )}
+                                            </Stack>
+                                        </SortableContext>
+                                    </DndContext>
+                                    :
+                                    <Stack styles={itemStackStyles} tokens={itemStackTokens}>
+                                        {sectionItems.map((sectionItem) =>
+                                            <div key={sectionItem.locationId}><SectionItemComponent onAddSectionItem={onSectionItemAdd} onDeleteSectionItem={onSectionItemDelete} key={sectionItem.locationId} sectionItemTitles={props.sectionItemTitles} onTitleChange={updateParentStateOnSectionItemTitleChange} {...sectionItem} uiMode={props.uiMode} /></div>
+                                        )}
+                                    </Stack>
+                                :
+                                <ActionButton iconProps={addIcon} onClick={onSectionItemAdd.bind(props.section.id, 0)} >Add section item</ActionButton>
+                        }
+                    </div>
+                    :
+                    undefined
             }
         </div>
     );

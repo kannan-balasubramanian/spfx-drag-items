@@ -15,6 +15,8 @@ import ISectionItemTitle from "../../models/ISectionItemTitle";
 
 function SectionItemComponent(props) {
 
+    // console.log("SectionItemComponent=>uiMode", props.uiMode);
+
     const [sectionItemTitle, setSectionItemTitle] = React.useState(props.title);
 
     const deleteIcon: IIconProps = { iconName: 'Delete' };
@@ -162,55 +164,75 @@ function SectionItemComponent(props) {
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Stack horizontal disableShrink styles={stackStyles} tokens={stackTokens}>
                 <Stack.Item align="auto" styles={stackItemStyles}>
-                    {props.title === undefined ?
-                        <Label>{props.locationId} ({props.id})</Label>
-                        : <Label>{props.locationId} ({props.id}) {props.title.title} ({props.title.id})</Label>}
+                    {
+                        props.title === undefined
+                            ?
+                            <Label>{props.locationId} ({props.id})</Label>
+                            :
+                            <Label>{props.locationId} ({props.id}) {props.title.title} ({props.title.id})</Label>
+                    }
                 </Stack.Item>
                 <Stack.Item align="auto" grow styles={stackItemStyles}>
-                    {sectionItemTitle == undefined || sectionItemTitle.id == undefined ?
-                        <TagPicker
-                            removeButtonAriaLabel="Remove"
-                            onResolveSuggestions={filterSuggestedTags}
-                            getTextFromItem={getTextFromItem}
-                            pickerSuggestionsProps={pickerSuggestionsProps}
-                            itemLimit={1}
-                            disabled={tagPicker}
-                            inputProps={{
-                                ...inputProps,
-                                id: 'picker1',
-                            }}
-                            // onItemSelected={onItemSelected}
-                            onChange={onItemChanged}
-                        // selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
-                        // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
-                        // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
-                        />
-                        :
-                        <TagPicker
-                            removeButtonAriaLabel="Remove"
-                            onResolveSuggestions={filterSuggestedTags}
-                            getTextFromItem={getTextFromItem}
-                            pickerSuggestionsProps={pickerSuggestionsProps}
-                            itemLimit={1}
-                            disabled={tagPicker}
-                            inputProps={{
-                                ...inputProps,
-                                id: 'picker1',
-                            }}
-                            // onItemSelected={onItemSelected}
-                            onChange={onItemChanged}
-                            selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == sectionItemTitle.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == sectionItemTitle.id)[0].name }]}
-                        // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
-                        // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
-                        />
+                    {
+                        sectionItemTitle == undefined || sectionItemTitle.id == undefined
+                            ?
+                            props.uiMode == 0
+                                ?
+                                <Label>{props.title.title}</Label>
+                                :
+                                <TagPicker
+                                    removeButtonAriaLabel="Remove"
+                                    onResolveSuggestions={filterSuggestedTags}
+                                    getTextFromItem={getTextFromItem}
+                                    pickerSuggestionsProps={pickerSuggestionsProps}
+                                    itemLimit={1}
+                                    disabled={tagPicker}
+                                    inputProps={{
+                                        ...inputProps,
+                                        id: 'picker1',
+                                    }}
+                                    // onItemSelected={onItemSelected}
+                                    onChange={onItemChanged}
+                                // selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
+                                // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
+                                // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
+                                />
+                            :
+                            props.uiMode == 0
+                                ?
+                                <Label>{props.title.title}</Label>
+                                :
+                                <TagPicker
+                                    removeButtonAriaLabel="Remove"
+                                    onResolveSuggestions={filterSuggestedTags}
+                                    getTextFromItem={getTextFromItem}
+                                    pickerSuggestionsProps={pickerSuggestionsProps}
+                                    itemLimit={1}
+                                    disabled={tagPicker}
+                                    inputProps={{
+                                        ...inputProps,
+                                        id: 'picker1',
+                                    }}
+                                    // onItemSelected={onItemSelected}
+                                    onChange={onItemChanged}
+                                    selectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == sectionItemTitle.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == sectionItemTitle.id)[0].name }]}
+                                // defaultSelectedItems={[{ key: filterSectionTitle(0), name: filterSectionTitle(1).toString() }]}
+                                // defaultSelectedItems={[{ key: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].key, name: pickerTags.filter(sectionItemTitleTemp => sectionItemTitleTemp.key == props.title.id)[0].name }]}
+                                />
                     }
 
                 </Stack.Item>
-                <Stack.Item align="end" styles={stackItemStyles}>
-                    {/* <IconButton iconProps={dragIcon} /> */}
-                    <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
-                    <IconButton iconProps={deleteIcon} onClick={onItemDeleteButtonClick} />
-                </Stack.Item>
+                {
+                    props.uiMode == 1
+                        ?
+                        <Stack.Item align="end" styles={stackItemStyles}>
+                            {/* <IconButton iconProps={dragIcon} /> */}
+                            <IconButton iconProps={addIcon} onClick={onAddButtonClick} />
+                            <IconButton iconProps={deleteIcon} onClick={onItemDeleteButtonClick} />
+                        </Stack.Item>
+                        :
+                        undefined
+                }
             </Stack>
         </div >
 

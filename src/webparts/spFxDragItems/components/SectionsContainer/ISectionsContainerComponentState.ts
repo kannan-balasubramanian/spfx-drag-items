@@ -9,4 +9,5 @@ export interface ISectionsContainerComponentState {
     isDeleteSectionItemModalOpen: boolean;
     isDeleteSectionModalOpen: boolean;
     sectionItemTitles: ISectionItemTitle[];
+    uiMode: number; //0=view, 1=edit, 2=new
 }

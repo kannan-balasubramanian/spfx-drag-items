@@ -5,6 +5,6 @@ export interface ISectionItemComponentState {
     title: string;
     locationId: number;
     sectionId: number;
-
     sectionItemTitles: ISectionItemTitle[];
+    uiMode: number; //0=view, 1=edit, 2=new
 }

@@ -15,8 +15,9 @@ import ISectionItemTitle from '../../models/ISectionItemTitle';
 const generateIcon: IIconProps = { iconName: 'SyncStatus' };
 const yesIcon: IIconProps = { iconName: 'Accept' };
 const noIcon: IIconProps = { iconName: 'CalculatorMultiply' };
-
-const viewIcon: IIconProps = { iconName: 'EntryView' };
+const viewStateIcon: IIconProps = { iconName: 'EntryView' };
+const viewModeIcon: IIconProps = { iconName: 'View' };
+const editModeIcon: IIconProps = { iconName: 'Edit' };
 
 const stackStyles: IStackStyles = {
     root: {
@@ -78,6 +79,7 @@ function SectionsContainerComponent(props) {
     const [sectionIndexToDelete, setSectionIndexToDelete] = React.useState(-1);
     const [sectionItemIndexToDelete, setSectionItemIndexToDelete] = React.useState(-1);
     const [isDragged, setIsDragged] = React.useState(false);
+    const [uiMode, setUiMode] = React.useState(1);
 
     //#region [Blue] Section Container - Start
     //This distance parameter ensures that drag event is avoided until unless dragged for more than 7px. This is used to prevent the drag event applying for child elements like button
@@ -371,6 +373,22 @@ function SectionsContainerComponent(props) {
         }
     };
 
+    const setUToView = () => {
+        try {
+            setUiMode(0);
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>setUToView'", Error);
+        }
+    };
+
+    const setUToEdit = () => {
+        try {
+            setUiMode(1);
+        } catch (Error) {
+            console.error("Error at 'SectionsContainerComponent=>setUToEdit'", Error);
+        }
+    };
+
     const randomNumberGenerator = () => {
         try {
             let min = 1;
@@ -387,13 +405,40 @@ function SectionsContainerComponent(props) {
         <div>
             <div>
                 <ActionButton iconProps={generateIcon} onClick={onGenerateSectionsButtonClicked.bind(this)} disabled={isGenerateSectionsButtonDisabled} >Generate Sections</ActionButton>
-                <ActionButton iconProps={viewIcon} onClick={viewState.bind(this)} >View 'State' in console</ActionButton>
+                <ActionButton iconProps={viewStateIcon} onClick={viewState.bind(this)} >View 'State' in console</ActionButton>
+                <ActionButton iconProps={viewModeIcon} onClick={setUToView.bind(this)} >View Mode</ActionButton>
+                <ActionButton iconProps={editModeIcon} onClick={setUToEdit.bind(this)} >Edit Mode</ActionButton>
             </div>
             <div>
                 <div>
-                    {sections.length > 0 ?
-                        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
-                            <SortableContext items={sections.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
+                    {
+                        sections.length > 0
+                            ?
+                            uiMode == 1
+                                ?
+                                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={onComponentItemDragStart} onDragEnd={onComponentItemDragEnd} >
+                                    <SortableContext items={sections.map(sectionItem => sectionItem.locationId.toString())} strategy={verticalListSortingStrategy} >
+                                        <Stack styles={stackStyles} tokens={stackTokens}>
+                                            {
+                                                sections.map((eachSection) => {
+                                                    return (<div key={eachSection.locationId}><SectionComponent
+                                                        onAddSection={onAddNewSectionFromSection}
+                                                        onDeleteSection={onDeleteSectionFromSection}
+                                                        onUpdateParentState={onUpdateParentStateCallFromSection}
+                                                        onAddSectionItem={onAddNewSectionItemFromSection}
+                                                        onDeleteSectionItem={onDeleteNewSectionItemFromSection}
+                                                        onSectionTitleChange={onSectionTitleChange}
+                                                        sectionItemTitles={sectionItemTitles}
+                                                        section={eachSection}
+                                                        uiMode={uiMode}
+                                                        key={eachSection.locationId} /></div>);
+                                                })
+
+                                            }
+                                        </Stack>
+                                    </SortableContext>
+                                </DndContext>
+                                :
                                 <Stack styles={stackStyles} tokens={stackTokens}>
                                     {
                                         sections.map((eachSection) => {
@@ -406,14 +451,14 @@ function SectionsContainerComponent(props) {
                                                 onSectionTitleChange={onSectionTitleChange}
                                                 sectionItemTitles={sectionItemTitles}
                                                 section={eachSection}
+                                                uiMode={uiMode}
                                                 key={eachSection.locationId} /></div>);
                                         })
 
                                     }
                                 </Stack>
-                            </SortableContext>
-                        </DndContext>
-                        : <div></div>
+                            :
+                            undefined
                     }
                 </div>
             </div>
